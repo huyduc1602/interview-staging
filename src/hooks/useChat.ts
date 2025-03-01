@@ -13,7 +13,7 @@ export function useChat({ type = 'questions' }: UseChatProps = {}) {
   const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [answer, setAnswer] = useState("");
-  const [selectedModel, setSelectedModel] = useState('gpt-3.5-turbo');
+  const [selectedModel, setSelectedModel] = useState<'gpt-3.5-turbo' | 'gpt-4-turbo-preview'>('gpt-3.5-turbo');
 
   const generateAnswer = async (content: string, promptKey: string) => {
     setLoading(true);
@@ -27,7 +27,7 @@ export function useChat({ type = 'questions' }: UseChatProps = {}) {
       });
       
       const response = await chatWithGPT(prompt, {
-        language: i18n.language,
+        language: i18n.language as 'en' | 'vi',
         modelType: selectedModel
       });
       
@@ -39,9 +39,9 @@ export function useChat({ type = 'questions' }: UseChatProps = {}) {
       }));
       
       setAnswer(response);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Failed to generate answer:', error);
-      if (error.message === 'API_RATE_LIMIT') {
+      if (error instanceof Error && error.message === 'API_RATE_LIMIT') {
         setAnswer(t(`${type}.messages.rateLimitError`));
       } else {
         setAnswer(t(`${type}.messages.error`));

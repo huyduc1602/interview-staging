@@ -18,6 +18,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { ModelSelector } from '@/components/ui/model-selector';
 
 export default function InterviewQuestions() {
     const dispatch = useDispatch();
