@@ -60,8 +60,8 @@ export default function KnowledgeBase() {
             <div className="container-fluid h-[calc(100vh-4rem)]">
                 <div className="grid grid-cols-[320px,1fr] h-full gap-6">
                     {/* Sidebar */}
-                    <div className="border-r pr-6 overflow-y-auto">
-                        <div className="sticky top-0 bg-white z-10 pb-4">
+                    <div className="border-r overflow-y-auto">
+                        <div className="sticky top-0 bg-white z-10 pb-4 pr-6 pl-6">
                             <div className="space-y-2 mb-4">
                                 <h2 className="text-xl font-semibold">Knowledge Base</h2>
                                 <div className="relative">

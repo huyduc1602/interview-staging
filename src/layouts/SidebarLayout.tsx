@@ -10,7 +10,7 @@ export function SidebarLayout({ sidebar, content }: SidebarLayoutProps) {
     <div className="container-fluid h-[calc(100vh-4rem)]">
       <div className="grid grid-cols-[320px,1fr] h-full gap-6">
         {/* Sidebar */}
-        <div className="border-r pr-6 overflow-y-auto">
+        <div className="border-r overflow-y-auto">
           {sidebar}
         </div>
         

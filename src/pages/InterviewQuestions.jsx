@@ -52,7 +52,7 @@ export default function InterviewQuestions() {
 
     const renderSidebar = () => (
         <>
-            <div className="sticky top-0 bg-white z-10 pb-4">
+            <div className="sticky top-0 bg-white z-10 pb-4 pr-6 pl-6">
                 <div className="space-y-2 mb-4">
                     <h2 className="text-xl font-semibold">Interview Questions</h2>
                     <SearchInput
