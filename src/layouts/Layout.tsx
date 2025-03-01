@@ -1,7 +1,11 @@
-import React from 'react';
 import { useLocation } from 'react-router-dom';
+import { ReactNode } from 'react';
 
-export default function Layout({ children }) {
+interface LayoutProps {
+  children: ReactNode;
+}
+
+export function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const isHome = location.pathname === '/';
 

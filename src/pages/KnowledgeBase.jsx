@@ -7,7 +7,7 @@ import { ChevronDown, ChevronRight, Check, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { fetchDataRequest } from '@/store/interview/slice';
-import Layout from '@/components/Layout';
+import { Layout } from '@/layouts';
 import { chatWithGPT } from '@/api/chat';
 import ReactMarkdown from 'react-markdown';
 
