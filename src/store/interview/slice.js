@@ -12,6 +12,7 @@ const interviewSlice = createSlice({
   name: 'interview',
   initialState,
   reducers: {
+    // Data fetching actions
     fetchDataRequest: (state) => {
       state.loading = true;
     },
@@ -24,20 +25,22 @@ const interviewSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+
+    // Answer handling actions
     fetchAnswerRequest: (state) => {
       state.loading = true;
     },
     fetchAnswerSuccess: (state, action) => {
       state.loading = false;
-      state.answers = {
-        ...state.answers,
-        [action.payload.question]: action.payload.answer,
-      };
+      const { question, category, answer } = action.payload;
+      state.answers[`${category}-${question}`] = answer;
     },
     fetchAnswerFailure: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },
+
+    // Knowledge status actions
     updateKnowledgeStatusRequest: (state) => {
       state.loading = true;
     },
@@ -56,7 +59,7 @@ const interviewSlice = createSlice({
     updateKnowledgeStatusFailure: (state, action) => {
       state.loading = false;
       state.error = action.payload;
-    },
+    }
   },
 });
 
