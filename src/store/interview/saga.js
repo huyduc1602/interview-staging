@@ -1,11 +1,13 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
-import { fetchGoogleSheetData } from '../../services/googleSheetService';
+import { fetchGoogleSheetData, updateKnowledgeStatus } from '../../services/googleSheetService';
 import { fetchChatGPTAnswer } from '../../services/chatgptService';
 import {
   fetchDataSuccess,
   fetchDataFailure,
   fetchAnswerSuccess,
   fetchAnswerFailure,
+  updateKnowledgeStatusSuccess,
+  updateKnowledgeStatusFailure,
 } from './slice';
 
 function* fetchDataSaga() {
@@ -29,7 +31,18 @@ function* fetchAnswerSaga(action) {
   }
 }
 
+function* updateKnowledgeStatusSaga(action) {
+  try {
+    const { rowIndex, status } = action.payload;
+    yield call(updateKnowledgeStatus, rowIndex, status);
+    yield put(updateKnowledgeStatusSuccess({ rowIndex, status }));
+  } catch (error) {
+    yield put(updateKnowledgeStatusFailure(error.message));
+  }
+}
+
 export function* interviewSaga() {
   yield takeLatest('interview/fetchDataRequest', fetchDataSaga);
   yield takeLatest('interview/fetchAnswerRequest', fetchAnswerSaga);
+  yield takeLatest('interview/updateKnowledgeStatusRequest', updateKnowledgeStatusSaga);
 }

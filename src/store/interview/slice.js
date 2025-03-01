@@ -38,6 +38,25 @@ const interviewSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    updateKnowledgeStatusRequest: (state) => {
+      state.loading = true;
+    },
+    updateKnowledgeStatusSuccess: (state, action) => {
+      state.loading = false;
+      const { rowIndex, status } = action.payload;
+      state.knowledge = state.knowledge.map(category => ({
+        ...category,
+        items: category.items.map(item =>
+          item.rowIndex === rowIndex
+            ? { ...item, status }
+            : item
+        )
+      }));
+    },
+    updateKnowledgeStatusFailure: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
   },
 });
 
@@ -48,6 +67,9 @@ export const {
   fetchAnswerRequest,
   fetchAnswerSuccess,
   fetchAnswerFailure,
+  updateKnowledgeStatusRequest,
+  updateKnowledgeStatusSuccess,
+  updateKnowledgeStatusFailure,
 } = interviewSlice.actions;
 
 export default interviewSlice.reducer;
