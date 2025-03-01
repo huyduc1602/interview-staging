@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchDataRequest, setCachedAnswer, clearCachedAnswers } from '@/store/interview/slice';
+import { fetchDataRequest, clearCachedAnswers } from '@/store/interview/slice';
+import { useChat } from '@/hooks/useChat';
 import { Layout, SidebarLayout, CategoryHeader } from '@/layouts';
-import { chatWithGPT } from '@/api/chat';
 import { SearchInput, HighlightText, LoadingSpinner, MarkdownContent } from '@/components/ui';
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -21,17 +21,23 @@ import {
 
 export default function InterviewQuestions() {
     const dispatch = useDispatch();
-    const { t, i18n } = useTranslation();
-    const { questions, cachedAnswers } = useSelector((state) => state.interview);
+    const { t } = useTranslation();
+    const { questions } = useSelector((state) => state.interview);
     const [expandedCategories, setExpandedCategories] = useState({});
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedQuestion, setSelectedQuestion] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [answer, setAnswer] = useState("");
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [shuffledQuestions, setShuffledQuestions] = useState([]);
     const [isTagsExpanded, setIsTagsExpanded] = useState(false);
-    const [selectedModel, setSelectedModel] = useState('gpt-3.5-turbo');
+
+    const {
+        loading,
+        answer,
+        selectedModel,
+        setSelectedModel,
+        generateAnswer,
+        setAnswer
+    } = useChat({ type: 'questions' });
 
     useEffect(() => {
         dispatch(fetchDataRequest());
@@ -53,46 +59,10 @@ export default function InterviewQuestions() {
 
     const handleQuestionClick = async (question) => {
         setSelectedQuestion(question);
-        setLoading(true);
-        setAnswer("");
-
-        const questionId = question.question.toLowerCase().trim();
-        const currentLanguage = i18n.language;
-        const cachedAnswer = cachedAnswers[currentLanguage]?.[questionId];
-
-        if (cachedAnswer) {
-            setAnswer(cachedAnswer);
-            setLoading(false);
-            return;
-        }
-
-        try {
-            const prompt = t('interviewQuestions.prompts.chatInstruction', { 
-                question: question.question
-            });
-            
-            const response = await chatWithGPT(prompt, {
-                language: currentLanguage,
-                modelType: 'gpt-3.5-turbo'
-            });
-            
-            dispatch(setCachedAnswer({
-                language: currentLanguage,
-                questionId,
-                answer: response
-            }));
-            
-            setAnswer(response);
-        } catch (error) {
-            console.error('Failed to fetch answer:', error);
-            if (error.message === 'API_RATE_LIMIT') {
-                setAnswer(t('interviewQuestions.messages.rateLimitError'));
-            } else {
-                setAnswer(t('interviewQuestions.messages.error'));
-            }
-        } finally {
-            setLoading(false);
-        }
+        await generateAnswer(
+            question.question,
+            'interviewQuestions.prompts.chatInstruction'
+        );
     };
 
     const handleCategorySelect = (category) => {
@@ -129,86 +99,25 @@ export default function InterviewQuestions() {
 
     const handleRegenerateAnswer = async () => {
         if (!selectedQuestion) return;
-        setLoading(true);
-        setAnswer("");
-        
-        try {
-            const prompt = t('interviewQuestions.prompts.chatInstruction', { 
-                question: selectedQuestion.question
-            });
-            
-            const response = await chatWithGPT(prompt, {
-                language: i18n.language,
-                modelType: selectedModel
-            });
-            
-            dispatch(setCachedAnswer({
-                language: i18n.language,
-                questionId: selectedQuestion.question.toLowerCase().trim(),
-                answer: response
-            }));
-            
-            setAnswer(response);
-        } catch (error) {
-            console.error('Failed to regenerate answer:', error);
-            if (error.message === 'API_RATE_LIMIT') {
-                setAnswer(t('interviewQuestions.messages.rateLimitError'));
-            } else {
-                setAnswer(t('interviewQuestions.messages.error'));
-            }
-        } finally {
-            setLoading(false);
-        }
+        await generateAnswer(
+            selectedQuestion.question,
+            'interviewQuestions.prompts.chatInstruction'
+        );
     };
 
     const renderModelSelector = () => (
-        <div className="flex items-center gap-2 mb-4">
-            <Select
-                value={selectedModel}
-                onValueChange={setSelectedModel}
-                disabled={loading}
-            >
-                <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select Model" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="gpt-3.5-turbo">
-                        <div className="flex items-center gap-2">
-                            <Zap className="w-4 h-4" />
-                            <span>GPT-3.5 Turbo</span>
-                        </div>
-                    </SelectItem>
-                    <SelectItem value="gpt-4-turbo-preview">
-                        <div className="flex items-center gap-2">
-                            <Zap className="w-4 h-4" />
-                            <span>GPT-4 Turbo</span>
-                        </div>
-                    </SelectItem>
-                </SelectContent>
-            </Select>
-            <Button
-                variant="outline"
-                size="icon"
-                onClick={handleRegenerateAnswer}
-                disabled={!selectedQuestion || loading}
-                className="h-10 w-10"
-                title={t('interviewQuestions.actions.regenerate')}
-            >
-                <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
-            </Button>
-            <Button
-                variant="outline"
-                size="icon"
-                onClick={() => {
-                    dispatch(clearCachedAnswers());
-                    setAnswer("");
-                }}
-                className="h-10 w-10"
-                title={t('interviewQuestions.actions.clearCache')}
-            >
-                <Trash2 className="h-4 w-4" />
-            </Button>
-        </div>
+        <ModelSelector
+            selectedModel={selectedModel}
+            onModelChange={setSelectedModel}
+            onRegenerate={handleRegenerateAnswer}
+            onClearCache={() => {
+                dispatch(clearCachedAnswers());
+                setAnswer("");
+            }}
+            loading={loading}
+            disabled={!selectedQuestion}
+            type="questions"
+        />
     );
 
     const renderCategoryTags = () => {
@@ -414,7 +323,7 @@ export default function InterviewQuestions() {
                                 <LoadingSpinner />
                             </div>
                         ) : answer ? (
-                            <MarkdownContent 
+                            <MarkdownContent
                                 content={answer}
                                 className="p-6"
                             />

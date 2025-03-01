@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchDataRequest, setCachedAnswer, clearCachedAnswers } from '@/store/interview/slice';
+import { fetchDataRequest, clearCachedAnswers } from '@/store/interview/slice';
 import { Layout } from '@/layouts';
-import { chatWithGPT } from '@/api/chat';
+import { useChat } from '@/hooks/useChat';
 import { Badge } from "@/components/ui/badge";
 import { ChevronDown, ChevronRight, Search, RefreshCw, Zap, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -20,14 +20,20 @@ import {
 
 export default function KnowledgeBase() {
     const dispatch = useDispatch();
-    const { t, i18n } = useTranslation();
-    const { knowledge, cachedAnswers } = useSelector((state) => state.interview);
+    const { t } = useTranslation();
+    const { knowledge } = useSelector((state) => state.interview);
     const [expandedCategories, setExpandedCategories] = useState({});
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedItem, setSelectedItem] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [answer, setAnswer] = useState("");
-    const [selectedModel, setSelectedModel] = useState('gpt-3.5-turbo');
+
+    const {
+        loading,
+        answer,
+        selectedModel,
+        setSelectedModel,
+        generateAnswer,
+        setAnswer
+    } = useChat({ type: 'knowledge' });
 
     useEffect(() => {
         dispatch(fetchDataRequest());
@@ -49,81 +55,18 @@ export default function KnowledgeBase() {
 
     const handleItemClick = async (item) => {
         setSelectedItem(item);
-        setLoading(true);
-        setAnswer("");
-
-        const itemId = item.content.toLowerCase().trim();
-        const currentLanguage = i18n.language;
-        const cachedAnswer = cachedAnswers[currentLanguage]?.knowledge?.[itemId];
-
-        if (cachedAnswer) {
-            setAnswer(cachedAnswer);
-            setLoading(false);
-            return;
-        }
-
-        try {
-            const prompt = t('knowledgeBase.prompts.chatInstruction', {
-                topic: item.content
-            });
-
-            const response = await chatWithGPT(prompt, {
-                language: currentLanguage,
-                modelType: selectedModel
-            });
-
-            dispatch(setCachedAnswer({
-                language: currentLanguage,
-                questionId: itemId,
-                answer: response,
-                type: 'knowledge'
-            }));
-
-            setAnswer(response);
-        } catch (error) {
-            console.error('Failed to fetch answer:', error);
-            if (error.message === 'API_RATE_LIMIT') {
-                setAnswer(t('knowledgeBase.messages.rateLimitError'));
-            } else {
-                setAnswer(t('knowledgeBase.messages.error'));
-            }
-        } finally {
-            setLoading(false);
-        }
+        await generateAnswer(
+            item.content,
+            'knowledgeBase.prompts.chatInstruction'
+        );
     };
 
     const handleRegenerateAnswer = async () => {
         if (!selectedItem) return;
-        setLoading(true);
-        setAnswer("");
-
-        try {
-            const prompt = t('knowledgeBase.prompts.chatInstruction', {
-                topic: selectedItem.content
-            });
-
-            const response = await chatWithGPT(prompt, {
-                language: i18n.language,
-                modelType: selectedModel
-            });
-
-            dispatch(setCachedAnswer({
-                language: i18n.language,
-                questionId: selectedItem.content.toLowerCase().trim(),
-                answer: response
-            }));
-
-            setAnswer(response);
-        } catch (error) {
-            console.error('Failed to regenerate answer:', error);
-            if (error.message === 'API_RATE_LIMIT') {
-                setAnswer(t('knowledgeBase.messages.rateLimitError'));
-            } else {
-                setAnswer(t('knowledgeBase.messages.error'));
-            }
-        } finally {
-            setLoading(false);
-        }
+        await generateAnswer(
+            selectedItem.content,
+            'knowledgeBase.prompts.chatInstruction'
+        );
     };
 
     const renderModelSelector = () => (
