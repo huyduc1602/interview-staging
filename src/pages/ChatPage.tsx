@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { ModelSelector } from '@/components/ui/model-selector';
 import { SaveDialog } from '@/components/ui/save-dialog';
 import { MessageItem } from '@/components/chat/message-item';
-import { SendHorizontal, AlertCircle } from 'lucide-react';
+import { SendHorizontal, AlertCircle, Sparkles } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface Message {
@@ -16,7 +16,7 @@ interface Message {
 }
 
 export default function ChatPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
@@ -38,6 +38,17 @@ export default function ChatPage() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const welcomeMessage: Message = {
+    role: 'assistant',
+    content: t('chat.welcome.title')
+  };
+
+  useEffect(() => {
+    if (messages.length === 0) {
+      setMessages([welcomeMessage]);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,8 +81,9 @@ export default function ChatPage() {
     }
   };
 
-  const handleSave = (message: Message) => {
-    if (message.role === 'error') return;
+  const handleSave = (message: Message, index: number) => {
+    // Don't allow saving error messages or welcome message
+    if (message.role === 'error' || index === 0) return;
     setSelectedMessage(message);
     setIsSaveDialogOpen(true);
   };
@@ -93,19 +105,25 @@ export default function ChatPage() {
   return (
     <Layout>
       <div className="container mx-auto max-w-4xl h-[calc(100vh-4rem)] flex flex-col">
-        <div className="border-b p-4">
-          <ModelSelector
-            selectedModel={selectedModel}
-            onModelChange={setSelectedModel}
-            onRegenerate={handleRetry}
-            onClearCache={() => {
-              setMessages([]);
-              setError(null);
-            }}
-            loading={loading}
-            disabled={loading}
-            type="chat"
-          />
+        <div className="border-b p-4 bg-white/80 backdrop-blur-sm dark:bg-gray-950/80">
+          <div className="flex items-center justify-between mb-2">
+            <h1 className="text-xl font-semibold flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-blue-500" />
+              {t('chat.header.title')}
+            </h1>
+            <ModelSelector
+              selectedModel={selectedModel}
+              onModelChange={setSelectedModel}
+              onRegenerate={handleRetry}
+              onClearCache={() => {
+                setMessages([welcomeMessage]);
+                setError(null);
+              }}
+              loading={loading}
+              disabled={loading}
+              type="chat"
+            />
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -120,29 +138,41 @@ export default function ChatPage() {
             <MessageItem
               key={index}
               message={message}
-              onSave={() => handleSave(message)}
+              onSave={() => handleSave(message, index)}
               loading={loading && index === messages.length - 1}
+              showSave={index !== 0} // Hide save button for welcome message
             />
           ))}
           <div ref={messagesEndRef} />
         </div>
 
-        <form onSubmit={handleSubmit} className="border-t p-4">
+        <form onSubmit={handleSubmit} className="border-t p-4 bg-white dark:bg-gray-950">
           <div className="flex gap-2">
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={t('chat.inputPlaceholder')}
+              placeholder={t('chat.input.placeholder')}
               disabled={loading}
               className="flex-1"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSubmit(e);
+                }
+              }}
             />
             <Button 
               type="submit" 
               disabled={loading || !input.trim()}
               variant={loading ? "outline" : "default"}
+              className="transition-all duration-200 hover:scale-105"
+              title={t('chat.actions.send')}
             >
               <SendHorizontal className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
             </Button>
+          </div>
+          <div className="mt-2 text-xs text-muted-foreground text-center">
+            {t('chat.input.hint')}
           </div>
         </form>
       </div>

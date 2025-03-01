@@ -11,9 +11,15 @@ interface MessageItemProps {
   };
   onSave: () => void;
   loading?: boolean;
+  showSave?: boolean;
 }
 
-export function MessageItem({ message, onSave, loading }: MessageItemProps) {
+export function MessageItem({ 
+  message, 
+  onSave, 
+  loading,
+  showSave = true // Default to true
+}: MessageItemProps) {
   const isUser = message.role === 'user';
   const isError = message.role === 'error';
 
@@ -47,7 +53,7 @@ export function MessageItem({ message, onSave, loading }: MessageItemProps) {
           ) : (
             <MarkdownContent content={message.content} />
           )}
-          {!isUser && !isError && (
+          {!isUser && !isError && showSave && (
             <Button
               variant="ghost"
               size="sm"

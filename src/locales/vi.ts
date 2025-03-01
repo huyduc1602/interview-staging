@@ -132,6 +132,27 @@ export default {
     models: {
       select: 'Chọn mô hình',
       premium: 'Premium'
+    },
+    welcome: {
+      title: "# 👋 Xin chào! Tôi là AI Assistant\n\nTôi có thể giúp bạn:\n- 📚 Giải thích các khái niệm lập trình\n- 💡 Đề xuất giải pháp kỹ thuật\n- 🔍 Phân tích và review code\n- 📝 Tạo unit test\n- ⚡ Tối ưu hiệu suất code\n\nHãy đặt câu hỏi bằng tiếng Việt hoặc tiếng Anh!",
+    },
+    input: {
+      placeholder: "Nhập câu hỏi của bạn...",
+      hint: "Nhấn Enter để gửi, Shift + Enter để xuống dòng"
+    },
+    header: {
+      title: "AI Chat Assistant"
+    },
+    actions: {
+      send: "Gửi",
+      retry: "Thử lại",
+      clear: "Xóa chat",
+      save: "Lưu vào câu hỏi"
+    },
+    errors: {
+      noResponse: "Không nhận được phản hồi từ ChatGPT",
+      unknown: "Đã xảy ra lỗi không xác định",
+      networkError: "Lỗi kết nối mạng"
     }
   }
 };

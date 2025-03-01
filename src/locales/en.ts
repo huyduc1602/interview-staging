@@ -131,6 +131,22 @@ export default {
     models: {
       select: 'Select model',
       premium: 'Premium'
+    },
+    welcome: {
+      title: "# 👋 Hello! I'm AI Assistant\n\nI can help you with:\n- 📚 Explaining programming concepts\n- 💡 Suggesting technical solutions\n- 🔍 Code analysis and review\n- 📝 Unit test creation\n- ⚡ Code performance optimization\n\nFeel free to ask questions in English or Vietnamese!",
+    },
+    input: {
+      placeholder: "Type your question...",
+      hint: "Press Enter to send, Shift + Enter for new line"
+    },
+    header: {
+      title: "AI Chat Assistant"
+    },
+    actions: {
+      send: "Send",
+      retry: "Retry",
+      clear: "Clear chat",
+      save: "Save to questions"
     }
   }
 }
