@@ -1,10 +1,11 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly VITE_CHATGPT_API_KEY: string
-  // Add other env variables here if needed
+    readonly VITE_GOOGLE_SHEET_API_KEY: string
+    readonly VITE_SPREADSHEET_ID: string
+    readonly VITE_CHATGPT_API_KEY: string
 }
 
 interface ImportMeta {
-  readonly env: ImportMetaEnv
+    readonly env: ImportMetaEnv
 }
