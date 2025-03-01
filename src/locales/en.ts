@@ -57,13 +57,24 @@ export default {
       notStarted: 'Not Started'
     },
     messages: {
-      loading: 'Generating answer...',
+      loading: 'Generating explanation...',
       selectTopic: 'Select a topic to get detailed information.',
       selectFromSidebar: 'Select a knowledge item from the sidebar to view details.',
-      error: 'Sorry, failed to generate response. Please try again.'
+      error: 'Failed to generate explanation. Please try again.',
+      rateLimitError: 'API rate limit exceeded. Please try again later.',
+      cacheClearedSuccess: 'All cached content has been cleared',
+      cacheClearError: 'Failed to clear cached content'
     },
     actions: {
-      getAnswer: 'Get AI Answer'
+      getAnswer: 'Get AI Answer',
+      regenerate: 'Regenerate explanation',
+      clearCache: 'Clear cached content'
+    },
+    prompts: {
+      chatInstruction: 'Provide a detailed explanation of this topic: {{topic}}'
+    },
+    models: {
+      select: 'Select Model'
     }
   },
   interviewQuestions: {
@@ -84,10 +95,21 @@ export default {
       loading: 'Generating answer...',
       selectQuestion: 'Select a question to view the answer.',
       selectFromSidebar: 'Select a question from the sidebar to view the answer.',
-      error: 'Sorry, failed to generate response. Please try again.'
+      rateLimitError: 'API rate limit exceeded. Please try again later or check your API quota.',
+      error: 'Sorry, failed to generate response. Please try again.',
+      cacheClearedSuccess: 'All cached answers have been cleared',
+      cacheClearError: 'Failed to clear cached answers'
     },
     prompts: {
-      chatInstruction: 'Answer this interview question in detail: {{question}}\nProvide a comprehensive explanation with examples if applicable.'
+      chatInstruction: 'Please provide a detailed answer in English for this interview question: {{question}}'
+    },
+    models: {
+      'gpt-3.5-turbo': 'GPT-3.5 Turbo',
+      'gpt-4-turbo-preview': 'GPT-4 Turbo'
+    },
+    actions: {
+      regenerate: 'Regenerate answer',
+      clearCache: 'Clear cached answers'
     }
   }
 }

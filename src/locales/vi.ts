@@ -57,13 +57,24 @@ export default {
       notStarted: 'Chưa học'
     },
     messages: {
-      loading: 'Đang tạo câu trả lời...',
-      selectTopic: 'Chọn một chủ đề để xem thông tin chi tiết.',
-      selectFromSidebar: 'Chọn một mục từ thanh bên để xem chi tiết.',
-      error: 'Xin lỗi, không thể tạo câu trả lời. Vui lòng thử lại.'
+      loading: 'Đang tạo giải thích...',
+      selectTopic: 'Chọn một chủ đề để xem chi tiết.',
+      selectFromSidebar: 'Chọn một chủ đề từ thanh bên.',
+      error: 'Không thể tạo giải thích. Vui lòng thử lại.',
+      rateLimitError: 'Đã vượt quá giới hạn API. Vui lòng thử lại sau.',
+      cacheClearedSuccess: 'Đã xóa tất cả nội dung trong bộ nhớ đệm',
+      cacheClearError: 'Không thể xóa bộ nhớ đệm'
     },
     actions: {
-      getAnswer: 'Nhận câu trả lời AI'
+      getAnswer: 'Nhận câu trả lời AI',
+      regenerate: 'Tạo lại nội dung',
+      clearCache: 'Xóa bộ nhớ đệm'
+    },
+    prompts: {
+      chatInstruction: 'Giải thích chi tiết chủ đề sau: {{topic}}'
+    },
+    models: {
+      select: 'Chọn Model'
     }
   },
   interviewQuestions: {
@@ -84,10 +95,22 @@ export default {
       loading: 'Đang tạo câu trả lời...',
       selectQuestion: 'Chọn một câu hỏi để xem câu trả lời.',
       selectFromSidebar: 'Chọn một câu hỏi từ thanh bên để xem câu trả lời.',
-      error: 'Xin lỗi, không thể tạo câu trả lời. Vui lòng thử lại.'
+      rateLimitError: 'Đã vượt quá giới hạn API. Vui lòng thử lại sau hoặc kiểm tra hạn mức API của bạn.',
+      error: 'Xin lỗi, không thể tạo câu trả lời. Vui lòng thử lại.',
+      cacheClearedSuccess: 'Đã xóa tất cả câu trả lời trong bộ nhớ đệm',
+      cacheClearError: 'Không thể xóa bộ nhớ đệm'
     },
     prompts: {
-      chatInstruction: 'Trả lời chi tiết câu hỏi phỏng vấn này: {{question}}\nĐưa ra lời giải thích toàn diện kèm ví dụ nếu có thể.'
+      chatInstruction: 'Vui lòng cung cấp câu trả lời chi tiết bằng tiếng Việt cho câu hỏi phỏng vấn này: {{question}}'
+    },
+    models: {
+      'gpt-3.5-turbo': 'GPT-3.5 Turbo',
+      'gpt-4-turbo-preview': 'GPT-4 Turbo'
+    },
+    actions: {
+      regenerate: 'Tạo lại câu trả lời',
+      selectModel: 'Chọn model',
+      clearCache: 'Xóa bộ nhớ đệm'
     }
   }
 };

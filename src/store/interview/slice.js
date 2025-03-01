@@ -1,11 +1,22 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const loadCachedAnswers = () => {
+  try {
+    const cached = localStorage.getItem('cachedAnswers');
+    return cached ? JSON.parse(cached) : { en: {}, vi: {} };
+  } catch (error) {
+    console.error('Failed to load cached answers:', error);
+    return { en: {}, vi: {} };
+  }
+};
+
 const initialState = {
   knowledge: [],
   questions: [],
   answers: {},
   loading: false,
   error: null,
+  cachedAnswers: loadCachedAnswers()
 };
 
 const interviewSlice = createSlice({
@@ -59,6 +70,28 @@ const interviewSlice = createSlice({
     updateKnowledgeStatusFailure: (state, action) => {
       state.loading = false;
       state.error = action.payload;
+    },
+
+    setCachedAnswer: (state, action) => {
+      const { language, questionId, answer, type = 'questions' } = action.payload;
+      if (!state.cachedAnswers[language]) {
+        state.cachedAnswers[language] = {};
+      }
+      if (!state.cachedAnswers[language][type]) {
+        state.cachedAnswers[language][type] = {};
+      }
+      state.cachedAnswers[language][type][questionId] = answer;
+      
+      // Save to localStorage
+      try {
+        localStorage.setItem('cachedAnswers', JSON.stringify(state.cachedAnswers));
+      } catch (error) {
+        console.error('Failed to save cached answers:', error);
+      }
+    },
+    clearCachedAnswers: (state) => {
+      state.cachedAnswers = { en: {}, vi: {} };
+      localStorage.removeItem('cachedAnswers');
     }
   },
 });
@@ -73,6 +106,8 @@ export const {
   updateKnowledgeStatusRequest,
   updateKnowledgeStatusSuccess,
   updateKnowledgeStatusFailure,
+  setCachedAnswer,
+  clearCachedAnswers,
 } = interviewSlice.actions;
 
 export default interviewSlice.reducer;
