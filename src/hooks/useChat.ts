@@ -1,51 +1,28 @@
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { setCachedAnswer } from '@/store/interview/slice';
-import { chatWithGPT } from '@/api/chat';
+import { fetchChatGPTAnswer } from '@/services/chatgptService';
 
 interface UseChatProps {
-  type?: 'questions' | 'knowledge';
+  type: 'chat' | 'knowledge' | 'questions';
 }
 
-export function useChat({ type = 'questions' }: UseChatProps = {}) {
-  const dispatch = useDispatch();
-  const { t, i18n } = useTranslation();
+export function useChat({ type }: UseChatProps) {
+  // Set default model to GPT-3.5-turbo
+  const [selectedModel, setSelectedModel] = useState('gpt-3.5-turbo-0125');
   const [loading, setLoading] = useState(false);
-  const [answer, setAnswer] = useState("");
-  const [selectedModel, setSelectedModel] = useState<'gpt-3.5-turbo' | 'gpt-4-turbo-preview'>('gpt-3.5-turbo');
 
-  const generateAnswer = async (content: string, promptKey: string) => {
-    setLoading(true);
-    setAnswer("");
-
-    const contentId = content.toLowerCase().trim();
-    
+  const generateAnswer = async (input: string): Promise<string> => {
     try {
-      const prompt = t(promptKey, { 
-        [type === 'questions' ? 'question' : 'topic']: content 
-      });
+      setLoading(true);
+      const response = await fetchChatGPTAnswer(input, selectedModel);
       
-      const response = await chatWithGPT(prompt, {
-        language: i18n.language as 'en' | 'vi',
-        modelType: selectedModel
-      });
-      
-      dispatch(setCachedAnswer({
-        language: i18n.language,
-        questionId: contentId,
-        answer: response,
-        type
-      }));
-      
-      setAnswer(response);
-    } catch (error: unknown) {
-      console.error('Failed to generate answer:', error);
-      if (error instanceof Error && error.message === 'API_RATE_LIMIT') {
-        setAnswer(t(`${type}.messages.rateLimitError`));
-      } else {
-        setAnswer(t(`${type}.messages.error`));
+      if (!response) {
+        throw new Error('No response from ChatGPT');
       }
+
+      return response;
+    } catch (error) {
+      console.error('ChatGPT Error:', error);
+      throw error;
     } finally {
       setLoading(false);
     }
@@ -53,10 +30,8 @@ export function useChat({ type = 'questions' }: UseChatProps = {}) {
 
   return {
     loading,
-    answer,
     selectedModel,
     setSelectedModel,
     generateAnswer,
-    setAnswer
   };
 }

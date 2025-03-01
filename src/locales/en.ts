@@ -10,6 +10,7 @@ export default {
     home: 'Interview Hub',
     knowledgeBase: '📚 Knowledge Base',
     interviewQuestions: '❓ Interview Questions',
+    chat: 'Chat with ChatGPT',
   },
   home: {
     hero: {
@@ -110,6 +111,26 @@ export default {
     actions: {
       regenerate: 'Regenerate answer',
       clearCache: 'Clear cached answers'
+    }
+  },
+  chat: {
+    inputPlaceholder: 'Ask a question...',
+    saveAsQuestion: 'Save as Interview Question',
+    selectCategory: 'Select a category',
+    prompts: {
+      default: '{{input}}'
+    },
+    errors: {
+      noResponse: 'No response from ChatGPT',
+      unknown: 'An unknown error occurred',
+      apiError: 'Failed to get response from ChatGPT',
+      invalidKey: 'Invalid API key',                                  
+      rateLimit: 'Rate limit exceeded. Please try again later.', 
+      networkError: 'Network connection error'
+    },
+    models: {
+      select: 'Select model',
+      premium: 'Premium'
     }
   }
 }

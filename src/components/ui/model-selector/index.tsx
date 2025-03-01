@@ -17,7 +17,7 @@ interface ModelSelectorProps {
   onClearCache: () => void;
   loading: boolean;
   disabled: boolean;
-  type?: 'questions' | 'knowledge';
+  type?: 'questions' | 'knowledge' | 'chat';
 }
 
 export function ModelSelector({
@@ -27,7 +27,7 @@ export function ModelSelector({
   onClearCache,
   loading,
   disabled,
-  type = 'questions'
+  type
 }: ModelSelectorProps) {
   const { t } = useTranslation();
 
@@ -38,20 +38,21 @@ export function ModelSelector({
         onValueChange={onModelChange}
         disabled={loading}
       >
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-[180px] bg-white dark:bg-gray-950">
           <SelectValue placeholder={t(`${type}.models.select`)} />
         </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="gpt-3.5-turbo">
+        <SelectContent className="bg-white dark:bg-gray-950">
+          <SelectItem value="gpt-3.5-turbo-0125" className="hover:bg-gray-100 dark:hover:bg-gray-800">
             <div className="flex items-center gap-2">
-              <Zap className="h-4 w-4" />
+              <Zap className="w-4 h-4" />
               <span>GPT-3.5 Turbo</span>
             </div>
           </SelectItem>
-          <SelectItem value="gpt-4-turbo-preview">
+          <SelectItem value="gpt-4-turbo-preview" className="hover:bg-gray-100 dark:hover:bg-gray-800">
             <div className="flex items-center gap-2">
-              <Zap className="h-4 w-4" />
+              <Zap className="w-4 h-4 text-blue-500" />
               <span>GPT-4 Turbo</span>
+              <span className="ml-auto text-xs text-muted-foreground">Premium</span>
             </div>
           </SelectItem>
         </SelectContent>

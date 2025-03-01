@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 
 const CHATGPT_API_KEY = import.meta.env.VITE_CHATGPT_API_KEY;
 
@@ -25,7 +25,14 @@ interface ChatGPTResponse {
     object: string;
     created: number;
     model: string;
-    choices: ChatGPTChoice[];
+    choices: Array<{
+        index: number;
+        message: {
+            role: string;
+            content: string;
+        };
+        finish_reason: string;
+    }>;
     usage: {
         prompt_tokens: number;
         completion_tokens: number;
@@ -33,36 +40,53 @@ interface ChatGPTResponse {
     };
 }
 
-export const fetchChatGPTAnswer = async (question: string): Promise<string> => {
-    try {
-        if (!CHATGPT_API_KEY) {
-            throw new Error('ChatGPT API key is not configured');
-        }
+export const fetchChatGPTAnswer = async (
+    question: string,
+    model: string = 'gpt-3.5-turbo-0125'
+): Promise<string> => {
+    if (!CHATGPT_API_KEY) {
+        throw new Error('ChatGPT API key is not configured');
+    }
 
+    try {
         const response = await axios.post<ChatGPTResponse>(
-            "https://api.openai.com/v1/chat/completions",
+            'https://api.openai.com/v1/chat/completions',
             {
-                model: "gpt-4",
-                messages: [{ role: "user", content: `Giải thích chi tiết: ${question}` }],
-                max_tokens: 500,
-                temperature: 0.7
-            } as ChatGPTRequest,
+                model: model,
+                messages: [
+                    {
+                        role: 'system',
+                        content: 'You are a helpful assistant providing detailed answers about programming and technical topics.'
+                    },
+                    {
+                        role: 'user',
+                        content: question
+                    }
+                ],
+                temperature: 0.7,
+                max_tokens: 1000,
+            },
             {
                 headers: {
                     'Authorization': `Bearer ${CHATGPT_API_KEY}`,
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
             }
         );
 
         if (!response.data.choices?.[0]?.message?.content) {
-            throw new Error('Invalid response from ChatGPT API');
+            throw new Error('Invalid response format from ChatGPT');
         }
 
         return response.data.choices[0].message.content;
     } catch (error) {
-        console.error('Error fetching ChatGPT answer:', error);
         if (axios.isAxiosError(error)) {
+            if (error.response?.status === 401) {
+                throw new Error('Invalid ChatGPT API key');
+            }
+            if (error.response?.status === 429) {
+                throw new Error('Rate limit exceeded. Please try again later.');
+            }
             throw new Error(`ChatGPT API error: ${error.response?.data?.error?.message || error.message}`);
         }
         throw error;

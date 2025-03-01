@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react
 import HomePage from "./pages/HomePage";
 import KnowledgeBase from './pages/KnowledgeBase';
 import InterviewQuestions from './pages/InterviewQuestions';
+import ChatPage from './pages/ChatPage'; // Add this import
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '@/components/ui';
 import './i18n';
@@ -35,6 +36,12 @@ function Navigation() {
             >
               {t('nav.interviewQuestions')}
             </Link>
+            <Link
+              to="/chat"
+              className="text-gray-600 hover:text-gray-900 font-medium"
+            >
+              {t('nav.chat')}
+            </Link>
           </div>
         </div>
       </div>
@@ -50,6 +57,7 @@ function App() {
         <Routes>
           <Route path="/knowledge" element={<KnowledgeBase />} />
           <Route path="/questions" element={<InterviewQuestions />} />
+          <Route path="/chat" element={<ChatPage />} />
           <Route path="/" element={<HomePage />} />
         </Routes>
         <LanguageSwitcher />

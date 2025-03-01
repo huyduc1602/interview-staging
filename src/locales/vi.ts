@@ -10,6 +10,7 @@ export default {
     home: 'Trung tâm Phỏng vấn',
     knowledgeBase: '📚 Cơ sở Kiến thức',
     interviewQuestions: '❓ Câu hỏi Phỏng vấn',
+    chat: 'Trò chuyện ChatGPT',
   },
   home: {
     hero: {
@@ -111,6 +112,26 @@ export default {
       regenerate: 'Tạo lại câu trả lời',
       selectModel: 'Chọn model',
       clearCache: 'Xóa bộ nhớ đệm'
+    }
+  },
+  chat: {
+    inputPlaceholder: 'Đặt câu hỏi...',
+    saveAsQuestion: 'Lưu thành Câu hỏi Phỏng vấn',
+    selectCategory: 'Chọn một danh mục',
+    prompts: {
+      default: '{{input}}'
+    },
+    errors: {
+      noResponse: 'Không nhận được phản hồi từ ChatGPT',
+      unknown: 'Đã xảy ra lỗi không xác định',
+      apiError: 'Lỗi API ChatGPT: {message}',
+      invalidKey: 'API key không hợp lệ',
+      rateLimit: 'Đã vượt quá giới hạn yêu cầu. Vui lòng thử lại sau.',
+      networkError: 'Lỗi kết nối mạng'
+    },
+    models: {
+      select: 'Chọn mô hình',
+      premium: 'Premium'
     }
   }
 };
