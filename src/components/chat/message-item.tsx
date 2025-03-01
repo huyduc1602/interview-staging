@@ -1,6 +1,6 @@
 import { MarkdownContent } from '@/components/ui/markdown-content';
 import { Button } from '@/components/ui/button';
-import { Save, AlertCircle } from 'lucide-react';
+import { Save, AlertCircle, User, Bot } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -18,15 +18,15 @@ export function MessageItem({
   message, 
   onSave, 
   loading,
-  showSave = true // Default to true
+  showSave = true 
 }: MessageItemProps) {
   const isUser = message.role === 'user';
   const isError = message.role === 'error';
 
   if (loading) {
     return (
-      <div className="flex gap-4">
-        <div className="flex-1">
+      <div className="group border-b border-gray-200 dark:border-gray-800">
+        <div className="container max-w-4xl mx-auto py-6">
           <Skeleton className="h-20 w-full" />
         </div>
       </div>
@@ -35,33 +35,51 @@ export function MessageItem({
 
   return (
     <div className={cn(
-      "flex gap-4",
-      isUser ? "flex-row-reverse" : "flex-row"
+      "group relative border-b border-gray-200 dark:border-gray-800",
+      isUser ? "bg-white dark:bg-gray-900" : "bg-gray-50 dark:bg-gray-800"
     )}>
-      <div className={cn(
-        "flex-1 rounded-lg p-4",
-        isUser ? "bg-blue-500 text-white" : 
-        isError ? "bg-red-50 border border-red-200" :
-        "bg-gray-100"
-      )}>
-        <div className="flex justify-between items-start gap-4">
-          {isError ? (
-            <div className="flex items-center gap-2 text-red-600">
-              <AlertCircle className="h-4 w-4" />
-              <span>{message.content}</span>
-            </div>
-          ) : (
-            <MarkdownContent content={message.content} />
-          )}
+      <div className="container max-w-4xl mx-auto py-6">
+        <div className="flex gap-6 items-start">
+          {/* Avatar */}
+          <div className="w-8 h-8 rounded-sm flex items-center justify-center shrink-0">
+            {isUser ? (
+              <div className="bg-gray-300 dark:bg-gray-600 w-full h-full rounded-sm flex items-center justify-center">
+                <User className="h-5 w-5 text-white" />
+              </div>
+            ) : (
+              <div className="bg-green-600 w-full h-full rounded-sm flex items-center justify-center">
+                <Bot className="h-5 w-5 text-white" />
+              </div>
+            )}
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 space-y-4 overflow-hidden">
+            {isError ? (
+              <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
+                <AlertCircle className="h-4 w-4" />
+                <span>{message.content}</span>
+              </div>
+            ) : (
+              <div className="prose dark:prose-invert max-w-none">
+                <MarkdownContent content={message.content} />
+              </div>
+            )}
+          </div>
+
+          {/* Actions */}
           {!isUser && !isError && showSave && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onSave}
-              className="shrink-0"
-            >
-              <Save className="h-4 w-4" />
-            </Button>
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onSave}
+                className="h-8 w-8"
+                title="Save to questions"
+              >
+                <Save className="h-4 w-4" />
+              </Button>
+            </div>
           )}
         </div>
       </div>

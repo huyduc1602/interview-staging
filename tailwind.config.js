@@ -29,7 +29,34 @@ export default {
           '50%': { opacity: '.5' },
         },
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            'code::before': {
+              content: '""'
+            },
+            'code::after': {
+              content: '""'
+            },
+            code: {
+              backgroundColor: 'rgb(var(--muted))',
+              padding: '0.2em 0.4em',
+              borderRadius: '0.25rem',
+              fontWeight: '400',
+            },
+            pre: {
+              backgroundColor: 'rgb(var(--muted))',
+              code: {
+                backgroundColor: 'transparent',
+                padding: 0,
+              }
+            }
+          }
+        }
+      }
     },
   },
-  plugins: [],
+  plugins: [
+    import('@tailwindcss/typography'),
+  ],
 }
