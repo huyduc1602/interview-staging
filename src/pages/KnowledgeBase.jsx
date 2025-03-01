@@ -10,8 +10,10 @@ import { fetchDataRequest } from '@/store/interview/slice';
 import { Layout } from '@/layouts';
 import { chatWithGPT } from '@/api/chat';
 import ReactMarkdown from 'react-markdown';
+import { useTranslation } from 'react-i18next';
 
 export default function KnowledgeBase() {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const { knowledge } = useSelector((state) => state.interview);
     const [expandedCategories, setExpandedCategories] = useState({});
@@ -63,12 +65,14 @@ export default function KnowledgeBase() {
                     <div className="border-r overflow-y-auto">
                         <div className="sticky top-0 bg-white z-10 pb-4 pr-6 pl-6">
                             <div className="space-y-2 mb-4">
-                                <h2 className="text-xl font-semibold">Knowledge Base</h2>
+                                <h2 className="text-xl font-semibold">
+                                    {t('knowledgeBase.title')}
+                                </h2>
                                 <div className="relative">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
                                     <Input
                                         type="text"
-                                        placeholder="Search..."
+                                        placeholder={t('knowledgeBase.searchPlaceholder')}
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         className="pl-10"
@@ -136,11 +140,11 @@ export default function KnowledgeBase() {
                                     </h1>
                                     <div className="flex items-center gap-2 mt-2">
                                         <Badge variant={
-                                            selectedItem.status === "Hoàn thành"
+                                            selectedItem.status === t('knowledgeBase.status.completed')
                                                 ? "success"
                                                 : "secondary"
                                         }>
-                                            {selectedItem.status}
+                                            {t(`knowledgeBase.status.${selectedItem.status.toLowerCase()}`)}
                                         </Badge>
                                     </div>
                                 </div>
@@ -149,7 +153,7 @@ export default function KnowledgeBase() {
                                     {loading ? (
                                         <div className="flex items-center gap-2 text-gray-500">
                                             <span className="animate-spin">⏳</span>
-                                            Generating answer...
+                                            {t('knowledgeBase.messages.loading')}
                                         </div>
                                     ) : answer ? (
                                         <div className="bg-gray-50 p-6 rounded-lg prose prose-sm max-w-none">
@@ -157,14 +161,14 @@ export default function KnowledgeBase() {
                                         </div>
                                     ) : (
                                         <p className="text-gray-500">
-                                            Select a topic to get detailed information.
+                                            {t('knowledgeBase.messages.selectTopic')}
                                         </p>
                                     )}
                                 </div>
                             </div>
                         ) : (
                             <div className="text-center text-gray-500">
-                                <p>Select a knowledge item from the sidebar to view details.</p>
+                                <p>{t('knowledgeBase.messages.selectFromSidebar')}</p>
                             </div>
                         )}
                     </div>

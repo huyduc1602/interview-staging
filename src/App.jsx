@@ -2,10 +2,14 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react
 import HomePage from "./pages/HomePage";
 import KnowledgeBase from './pages/KnowledgeBase';
 import InterviewQuestions from './pages/InterviewQuestions';
+import { useTranslation } from 'react-i18next';
+import { LanguageSwitcher } from '@/components/ui';
+import './i18n';
 
 function Navigation() {
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const { t } = useTranslation();
 
   if (isHome) return null;
 
@@ -15,7 +19,7 @@ function Navigation() {
         <div className="flex h-16 justify-between items-center">
           <div className="flex items-center gap-2">
             <Link to="/" className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              Interview Hub
+              {t('nav.home')}
             </Link>
           </div>
           <div className="flex items-center gap-8">
@@ -23,13 +27,13 @@ function Navigation() {
               to="/knowledge"
               className="text-gray-600 hover:text-gray-900 font-medium"
             >
-              📚 Knowledge Base
+              {t('nav.knowledgeBase')}
             </Link>
             <Link
               to="/questions"
               className="text-gray-600 hover:text-gray-900 font-medium"
             >
-              ❓ Interview Questions
+              {t('nav.interviewQuestions')}
             </Link>
           </div>
         </div>
@@ -48,6 +52,7 @@ function App() {
           <Route path="/questions" element={<InterviewQuestions />} />
           <Route path="/" element={<HomePage />} />
         </Routes>
+        <LanguageSwitcher />
       </div>
     </Router>
   );

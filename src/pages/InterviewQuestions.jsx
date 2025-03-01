@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ChevronDown, ChevronRight, ChevronUp, Shuffle, Tag, X } from "lucide-react";
 import { TooltipProvider, Tooltip } from "@/components/ui/tooltip";
+import { useTranslation } from 'react-i18next';
 
 export default function InterviewQuestions() {
     const dispatch = useDispatch();
@@ -22,6 +23,7 @@ export default function InterviewQuestions() {
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [shuffledQuestions, setShuffledQuestions] = useState([]);
     const [isTagsExpanded, setIsTagsExpanded] = useState(false);
+    const { t } = useTranslation();
 
     useEffect(() => {
         dispatch(fetchDataRequest());
@@ -47,12 +49,12 @@ export default function InterviewQuestions() {
         setAnswer("");
 
         try {
-            const prompt = `Answer this interview question in detail: ${question.question}\nProvide a comprehensive explanation with examples if applicable.`;
+            const prompt = t('interviewQuestions.prompts.chatInstruction', { question: question.question });
             const response = await chatWithGPT(prompt);
             setAnswer(response);
         } catch (error) {
             console.error('Failed to fetch answer:', error);
-            setAnswer("Sorry, failed to generate response. Please try again.");
+            setAnswer(t('interviewQuestions.messages.error'));
         } finally {
             setLoading(false);
         }
@@ -109,7 +111,7 @@ export default function InterviewQuestions() {
                     ))}
                     {selectedCount > 2 && (
                         <Badge variant="outline">
-                            +{selectedCount - 2} more
+                            +{selectedCount - 2} {t('interviewQuestions.categories.more')}
                         </Badge>
                     )}
                     <Button
@@ -119,7 +121,7 @@ export default function InterviewQuestions() {
                         onClick={() => setIsTagsExpanded(true)}
                     >
                         <Tag className="h-4 w-4 mr-2" />
-                        {selectedCount}/{totalCount} categories
+                        {t('interviewQuestions.categories.selectCount', { selected: selectedCount, total: totalCount })}
                     </Button>
                 </div>
             );
@@ -129,9 +131,9 @@ export default function InterviewQuestions() {
             <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium text-gray-700">
-                        Select Categories ({selectedCount}/{totalCount})
+                        {t('interviewQuestions.categories.select')} ({selectedCount}/{totalCount})
                     </span>
-                    <Tooltip content="Collapse category selection">
+                    <Tooltip content={t('interviewQuestions.tooltips.collapse')}>
                         <Button
                             variant="ghost"
                             size="sm"
@@ -169,18 +171,18 @@ export default function InterviewQuestions() {
         <>
             <div className="sticky top-0 bg-white z-10 pb-4 pr-6 pl-6">
                 <div className="space-y-4 mb-4">
-                    <h2 className="text-xl font-semibold">Interview Questions</h2>
+                    <h2 className="text-xl font-semibold">{t('interviewQuestions.title')}</h2>
                     <div className="flex items-center justify-between">
-                        <Tooltip content="Search through all questions">
+                        <Tooltip content={t('interviewQuestions.tooltips.search')}>
                             <div>
                                 <SearchInput
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    placeholder="Search questions..."
+                                    placeholder={t('interviewQuestions.searchPlaceholder')}
                                 />
                             </div>
                         </Tooltip>
-                        <Tooltip content="Randomly shuffle selected category questions">
+                        <Tooltip content={t('interviewQuestions.tooltips.shuffle')}>
                             <span>
                                 <Button
                                     size="sm"
@@ -293,14 +295,14 @@ export default function InterviewQuestions() {
                         <MarkdownContent content={answer} />
                     ) : (
                         <p className="text-gray-500">
-                            Select a question to view the answer.
+                            {t('interviewQuestions.messages.selectQuestion')}
                         </p>
                     )}
                 </div>
             </div>
         ) : (
             <div className="text-center text-gray-500">
-                <p>Select a question from the sidebar to view the answer.</p>
+                <p>{t('interviewQuestions.messages.selectFromSidebar')}</p>
             </div>
         )
     );
