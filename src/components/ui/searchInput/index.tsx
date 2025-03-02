@@ -6,6 +6,7 @@ interface SearchInputProps {
   value: string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
+  className?: string;
 }
 
 export function SearchInput({ value, onChange, placeholder }: SearchInputProps) {

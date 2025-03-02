@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, Brain, ArrowRight, MessageSquare, Send } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -22,14 +22,16 @@ const HomePage = () => {
         setAnswer  // Make sure useChat returns this
     } = useChat({ type: 'chat' });
 
-    const handleChatSubmit = async (e) => {
+    const handleChatSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!chatInput.trim()) return;
 
         try {
             const response = await generateAnswer(chatInput);
-            setAnswer(response);  // Set the answer explicitly
-            setChatInput('');
+            if (response) {
+                setAnswer(response);
+                setChatInput('');
+            }
         } catch (error) {
             console.error('Chat error:', error);
         }
@@ -71,7 +73,9 @@ const HomePage = () => {
                             <div className="space-y-4">
                                 <div className="flex items-center gap-2 text-sm text-gray-600">
                                     <MessageSquare className="w-4 h-4" />
-                                    {t('home.chat.welcome', { name: user?.email ?? 'you' })}
+                                    {t('home.chat.welcome', {
+                                        name: user?.email?.split('@')[0] || 'Guest'
+                                    })}
                                 </div>
 
                                 <AIResponseDisplay
@@ -93,9 +97,13 @@ const HomePage = () => {
                                     <Button
                                         type="submit"
                                         disabled={loading || !chatInput.trim()}
-                                        className="bg-purple-600 hover:bg-purple-700 text-white"
+                                        className="bg-purple-600 hover:bg-purple-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        <Send className="w-4 h-4" />
+                                        {loading ? (
+                                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                        ) : (
+                                            <Send className="w-4 h-4" />
+                                        )}
                                     </Button>
                                 </form>
                             </div>

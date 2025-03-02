@@ -4,25 +4,19 @@ import { fetchDataRequest, clearCachedAnswers } from '@/store/interview/slice';
 import { useChat } from '@/hooks/useChat';
 import { useAIResponse } from '@/hooks/useAIResponse';
 import { Layout, SidebarLayout, CategoryHeader } from '@/layouts';
-import { SearchInput, HighlightText, LoadingSpinner, MarkdownContent } from '@/components/ui';
+import { SearchInput, HighlightText } from '@/components/ui';
 import { cn } from "@/lib/utils";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronDown, ChevronRight, ChevronUp, Shuffle, Tag, X, RefreshCw, Zap, Trash2, BookmarkPlus } from "lucide-react";
+import { ChevronUp, Shuffle, Tag, X, BookmarkPlus } from "lucide-react";
 import { TooltipProvider, Tooltip } from "@/components/ui/tooltip";
 import { useTranslation } from 'react-i18next';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import { ModelSelector } from '@/components/ui/model-selector';
 import { AIResponseDisplay } from '@/components/ai/AIResponseDisplay';
 import { useAuth } from '@/hooks/useAuth';
 import { useSavedItems } from '@/hooks/useSavedItems';
+import type { InterviewQuestion, ExpandedCategories } from '@/types/interview';
+import { RootState } from "@/store/types";
 
 /**
  * Component for displaying and managing a list of interview questions.
@@ -39,12 +33,12 @@ import { useSavedItems } from '@/hooks/useSavedItems';
 export default function InterviewQuestions() {
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const { questions } = useSelector((state) => state.interview);
-    const [expandedCategories, setExpandedCategories] = useState({});
+    const { questions } = useSelector((state: RootState) => state.interview);
+    const [expandedCategories, setExpandedCategories] = useState<ExpandedCategories>({});
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedQuestion, setSelectedQuestion] = useState(null);
-    const [selectedCategories, setSelectedCategories] = useState([]);
-    const [shuffledQuestions, setShuffledQuestions] = useState([]);
+    const [selectedQuestion, setSelectedQuestion] = useState<InterviewQuestion | null>(null);
+    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    const [shuffledQuestions, setShuffledQuestions] = useState<InterviewQuestion[]>([]);
     const [isTagsExpanded, setIsTagsExpanded] = useState(false);
     const { user } = useAuth();
     const { saveItem } = useSavedItems();
@@ -76,22 +70,25 @@ export default function InterviewQuestions() {
         dispatch(fetchDataRequest());
     }, [dispatch]);
 
-    const toggleCategory = (categoryIndex) => {
+    const toggleCategory = (categoryIndex: number) => {
         setExpandedCategories(prev => ({
             ...prev,
             [categoryIndex]: !prev[categoryIndex]
         }));
     };
 
-    const filterQuestions = (items, query) => {
+    const filterQuestions = (items: InterviewQuestion[], query: string): InterviewQuestion[] => {
         if (!query) return items;
         return items.filter(item =>
             item.question.toLowerCase().includes(query.toLowerCase())
         );
     };
 
-    const handleQuestionClick = async (question) => {
-        setSelectedQuestion(question);
+    const handleQuestionClick = async (question: InterviewQuestion, category?: string) => {
+        setSelectedQuestion({
+            ...question,
+            category: category || question.category || ''
+        });
         try {
             await handleGenerateAnswer(question.question);
         } catch (error) {
@@ -99,7 +96,7 @@ export default function InterviewQuestions() {
         }
     };
 
-    const handleCategorySelect = (category) => {
+    const handleCategorySelect = (category: string) => {
         setSelectedCategories(prev => {
             const isSelected = prev.includes(category);
             if (isSelected) {
@@ -123,6 +120,7 @@ export default function InterviewQuestions() {
             .sort(() => Math.random() - 0.5)
             .map((question, index) => ({
                 ...question,
+                question: question.content,
                 orderNumber: index + 1
             }));
 
@@ -133,10 +131,7 @@ export default function InterviewQuestions() {
 
     const handleRegenerateAnswer = async () => {
         if (!selectedQuestion) return;
-        await generateAnswer(
-            selectedQuestion.question,
-            'interviewQuestions.prompts.chatInstruction'
-        );
+        await generateAnswer(selectedQuestion.question);
     };
 
     const renderModelSelector = () => (
@@ -297,8 +292,12 @@ export default function InterviewQuestions() {
                     </div>
                 ) : (
                     <div className="space-y-4">
-                        {questions.map((category, categoryIndex) => {
-                            const filteredItems = filterQuestions(category.items || [], searchQuery);
+                        {questions.map((category: any, categoryIndex: number) => {
+                            const items = category.items?.map((item: any) => ({
+                                ...item,
+                                question: item.content || item.question
+                            })) || [];
+                            const filteredItems = filterQuestions(items, searchQuery);
                             if (filteredItems.length === 0 && searchQuery) return null;
 
                             return (
@@ -310,7 +309,7 @@ export default function InterviewQuestions() {
                                         onClick={() => toggleCategory(categoryIndex)}
                                     />
                                     <div className="ml-6 space-y-1">
-                                        {filteredItems.map((item, itemIndex) => (
+                                        {filteredItems.map((item: InterviewQuestion, itemIndex: number) => (
                                             <button
                                                 key={itemIndex}
                                                 onClick={() => handleQuestionClick(item, category.category)}
@@ -356,9 +355,9 @@ export default function InterviewQuestions() {
                                     size="sm"
                                     onClick={() => saveItem({
                                         type: 'interview',
-                                        category: selectedQuestion.category,
+                                        category: selectedQuestion.category || '',
                                         question: selectedQuestion.question,
-                                        answer: selectedQuestion.answer,
+                                        answer: selectedQuestion.answer || '',
                                         model: selectedModel
                                     })}
                                 >

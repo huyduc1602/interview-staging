@@ -14,7 +14,7 @@ import {
 import { AIModel } from "@/services/aiServices/types";
 
 interface ModelSelectorProps {
-  selectedModel?: AIModel;  // Make optional
+  selectedModel: string;
   onModelChange: (model: AIModel) => void;
   onRegenerate?: () => void;
   onClearCache?: () => void;

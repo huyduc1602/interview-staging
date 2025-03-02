@@ -8,19 +8,19 @@ interface CategoryHeaderProps {
   onClick: () => void;
 }
 
-export function CategoryHeader({ 
-  isExpanded, 
-  title, 
-  itemCount, 
-  onClick 
-}: CategoryHeaderProps) {
+export const CategoryHeader: React.FC<CategoryHeaderProps> = ({
+  isExpanded,
+  title,
+  itemCount,
+  onClick
+}) => {
   return (
     <button
       onClick={onClick}
       className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900"
     >
-      {isExpanded ? 
-        <ChevronDown className="h-4 w-4" /> : 
+      {isExpanded ?
+        <ChevronDown className="h-4 w-4" /> :
         <ChevronRight className="h-4 w-4" />
       }
       <span>{title}</span>

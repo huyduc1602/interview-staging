@@ -1,13 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchDataRequest } from '@/store/interview/slice';
+import type { RootState } from '@/store/types';
 import { useChat } from '@/hooks/useChat';
 import { useAIResponse } from '@/hooks/useAIResponse';
 import { Layout, SidebarLayout, CategoryHeader } from '@/layouts';
 import { SearchInput, HighlightText } from '@/components/ui';
 import { cn } from "@/lib/utils";
 import { Search, Send } from "lucide-react";
-import { useTranslation } from 'react-i18next';
 import { ModelSelector } from '@/components/ui/model-selector';
 import { AIResponseDisplay } from '@/components/ai/AIResponseDisplay';
 import { useAuth } from '@/hooks/useAuth';
@@ -15,18 +15,21 @@ import { useSavedItems } from '@/hooks/useSavedItems';
 import { Button } from '@/components/ui/button';
 import { BookmarkPlus } from 'lucide-react';
 import { LoginForm } from '@/components/auth/LoginForm';
+import { useTranslation } from 'react-i18next';
+import type { KnowledgeItem, ChatHistory, ExpandedCategories } from '@/types/knowledge';
 
-export default function KnowledgeBase() {
-    const { user } = useAuth();
+interface KnowledgeBaseProps { }
 
-    const dispatch = useDispatch();
+export default function KnowledgeBase({ }: KnowledgeBaseProps) {
     const { t } = useTranslation();
-    const { knowledge } = useSelector((state) => state.interview);
-    const [expandedCategories, setExpandedCategories] = useState({});
+    const { user } = useAuth();
+    const dispatch = useDispatch();
+    const { questions: knowledge } = useSelector((state: RootState) => state.interview);
+    const [expandedCategories, setExpandedCategories] = useState<ExpandedCategories>({});
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedItem, setSelectedItem] = useState(null);
+    const [selectedItem, setSelectedItem] = useState<KnowledgeItem | null>(null);
     const [chatInput, setChatInput] = useState('');
-    const [chatHistory, setChatHistory] = useState({});
+    const [chatHistory, setChatHistory] = useState<ChatHistory>({});
     const { savedItems, saveItem, addFollowUpQuestion } = useSavedItems();
 
     const {
@@ -41,9 +44,9 @@ export default function KnowledgeBase() {
         error
     } = useAIResponse({
         generateAnswer,
-        onSuccess: useCallback((content) => {
+        onSuccess: useCallback((content: string) => {
             if (selectedItem) {
-                setSelectedItem(prev => ({ ...prev, answer: content }));
+                setSelectedItem(prev => prev ? ({ ...prev, answer: content }) : null);
             }
         }, [selectedItem]),
         onError: useCallback(() => {
@@ -72,41 +75,44 @@ export default function KnowledgeBase() {
         }
     }, [chatHistory, user]);
 
-    const toggleCategory = (categoryIndex) => {
+    const toggleCategory = (categoryIndex: number): void => {
         setExpandedCategories(prev => ({
             ...prev,
             [categoryIndex]: !prev[categoryIndex]
         }));
     };
 
-    const filterItems = (items, query) => {
+    const filterItems = (items: KnowledgeItem[], query: string): KnowledgeItem[] => {
         if (!query) return items;
         return items.filter(item =>
             item.content.toLowerCase().includes(query.toLowerCase())
         );
     };
 
-    const handleItemClick = async (item) => {
-        // Set selected item with initial empty answer
+    const handleItemClick = async (item: KnowledgeItem): Promise<void> => {
         setSelectedItem({ ...item, answer: null });
 
         try {
             const answer = await handleGenerateAnswer(item.content);
-            // Update selected item with the generated answer
-            setSelectedItem(prev => ({ ...prev, answer }));
+            setSelectedItem(prev => prev ? { ...prev, answer } : null);
         } catch (error) {
             console.error('Failed to generate answer:', error);
-            // Reset selected item on error
             setSelectedItem(null);
         }
     };
 
-    const handleRegenerateAnswer = async () => {
+    const handleRegenerateAnswer = async (): Promise<void> => {
         if (!selectedItem) return;
-        await generateAnswer(selectedItem.content);
+
+        try {
+            const answer = await generateAnswer(selectedItem.content);
+            setSelectedItem(prev => prev ? { ...prev, answer } : null);
+        } catch (error) {
+            console.error('Failed to regenerate answer:', error);
+        }
     };
 
-    const handleFollowUpQuestion = async (e) => {
+    const handleFollowUpQuestion = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
         if (!chatInput.trim() || !selectedItem) return;
 
@@ -114,33 +120,28 @@ export default function KnowledgeBase() {
         setChatInput('');
 
         try {
-            // Add user message to chat history immediately
             setChatHistory(prev => ({
                 ...prev,
                 [selectedItem.content]: [
                     ...(prev[selectedItem.content] || []),
-                    { role: 'user', content: question }
+                    { role: 'user', content: question, timestamp: Date.now() }
                 ]
             }));
 
-            // Generate answer with context
             const contextualQuestion = `Based on the topic "${selectedItem.content}" and its explanation, please answer this follow-up question: ${question}`;
             const answer = await generateAnswer(contextualQuestion);
 
-            // Add AI response to chat history
             setChatHistory(prev => ({
                 ...prev,
                 [selectedItem.content]: [
                     ...(prev[selectedItem.content] || []),
-                    { role: 'assistant', content: answer }
+                    { role: 'assistant', content: answer, timestamp: Date.now() }
                 ]
             }));
 
-            // Save follow-up Q&A
-            if (user) {
+            if (user && selectedItem) {
                 const savedItem = savedItems.find(
-                    item => item.type === 'knowledge' &&
-                        item.question === selectedItem.content
+                    item => item.type === 'knowledge' && item.question === selectedItem.content
                 );
 
                 if (savedItem) {
@@ -149,7 +150,6 @@ export default function KnowledgeBase() {
             }
         } catch (error) {
             console.error('Failed to get follow-up answer:', error);
-            // Add error message to chat history
             setChatHistory(prev => ({
                 ...prev,
                 [selectedItem.content]: [
@@ -157,11 +157,28 @@ export default function KnowledgeBase() {
                     {
                         role: 'assistant',
                         content: t('common.errors.failedToGetAnswer'),
-                        isError: true
+                        isError: true,
+                        timestamp: Date.now()
                     }
                 ]
             }));
         }
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setChatInput(e.target.value);
+    };
+
+    const handleSaveItem = (item: KnowledgeItem, model: string) => {
+        if (!item.answer) return;
+
+        saveItem({
+            type: 'knowledge',
+            category: item.category || '',
+            question: item.content,
+            answer: item.answer,
+            model: model
+        });
     };
 
     const renderModelSelector = () => (
@@ -252,13 +269,7 @@ export default function KnowledgeBase() {
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    onClick={() => saveItem({
-                                        type: 'knowledge',
-                                        category: selectedItem.category,
-                                        question: selectedItem.content,
-                                        answer: selectedItem.answer,
-                                        model: selectedModel
-                                    })}
+                                    onClick={() => handleSaveItem(selectedItem, selectedModel)}
                                 >
                                     <BookmarkPlus className="w-4 h-4 mr-2" />
                                     {t('common.save')}
@@ -318,7 +329,7 @@ export default function KnowledgeBase() {
                                 <input
                                     type="text"
                                     value={chatInput}
-                                    onChange={(e) => setChatInput(e.target.value)}
+                                    onChange={handleInputChange}
                                     placeholder={t('knowledge.followUp.inputPlaceholder')}
                                     className="flex-1 px-4 py-2 ms-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                                     disabled={loading}

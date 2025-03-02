@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 
-export const LoginForm = () => {
+interface LoginFormProps {
+    onSuccess?: () => void;
+}
+
+export const LoginForm: React.FC<LoginFormProps> = ({ }) => {
     const [email, setEmail] = useState('');
     const { login } = useAuth();
 

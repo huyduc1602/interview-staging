@@ -9,9 +9,10 @@ export default defineConfig({
             '@': path.resolve(__dirname, './src'),
         },
     },
+    build: {
+        sourcemap: true,
+    },
     server: {
-        watch: {
-            usePolling: true
-        }
-    }
+        port: 5173,
+    },
 });
