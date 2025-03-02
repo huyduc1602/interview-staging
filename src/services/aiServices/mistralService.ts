@@ -62,21 +62,7 @@ export async function generateMistralResponse(prompt: string): Promise<MistralRe
     }
 
     const response_data: MistralAPIResponse = response.data;
-    return {
-      model: AIModel.MISTRAL,
-      id: response_data.id,
-      object: response_data.object,
-      created: response_data.created,
-      choices: response_data.choices.map((choice): MistralChoice => ({
-      index: choice.index,
-      message: {
-        role: choice.message.role,
-        tool_calls: choice.message.tool_calls || null,
-        content: choice.message.content
-      },
-      finish_reason: choice.finish_reason
-      }))
-    };
+    return response_data as MistralResponse;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('Mistral API Error:', {

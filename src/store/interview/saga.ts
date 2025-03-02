@@ -1,7 +1,7 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { fetchGoogleSheetData, updateKnowledgeStatus } from '@/services/googleSheetService';
-import type { ApiResponse, SheetData } from '@/services/googleSheetService';
+import { ApiResponse, SheetData } from '@/services/googleSheetService.d';
 import { fetchChatGPTAnswer } from '@/services/aiServices/chatgptService';
 import type { AIResponse } from '@/services/aiServices/types';
 import {
@@ -46,7 +46,7 @@ function* fetchAnswerSaga(action: PayloadAction<string>): Generator<any, void, A
         const response: AIResponse = yield call(fetchChatGPTAnswer, action.payload, 'gpt-3.5-turbo-0125');
         yield put(fetchAnswerSuccess({
             question: action.payload,
-            answer: response.content,
+            answer: 'choices' in response ? response.choices[0].message.content : response.candidates[0].content.parts[0].text,
         } as AnswerPayload));
     } catch (error) {
         yield put(fetchAnswerFailure(

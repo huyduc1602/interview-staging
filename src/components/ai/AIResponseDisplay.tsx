@@ -18,7 +18,6 @@ export function AIResponseDisplay({
     emptyMessage,
     className
 }: AIResponseDisplayProps) {
-    const { t } = useTranslation();
 
     // Show loading state
     if (loading) {
