@@ -1,22 +1,15 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchDataRequest, clearCachedAnswers } from '@/store/interview/slice';
-import { Layout } from '@/layouts';
+import { fetchDataRequest } from '@/store/interview/slice';
 import { useChat } from '@/hooks/useChat';
-import { Badge } from "@/components/ui/badge";
-import { ChevronDown, ChevronRight, Search, RefreshCw, Zap, Trash2 } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { useAIResponse } from '@/hooks/useAIResponse';
+import { Layout, SidebarLayout, CategoryHeader } from '@/layouts';
+import { SearchInput, HighlightText } from '@/components/ui';
 import { cn } from "@/lib/utils";
-import { MarkdownContent } from '@/components/ui/markdown-content';
+import { Search } from "lucide-react";
 import { useTranslation } from 'react-i18next';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+import { ModelSelector } from '@/components/ui/model-selector';
+import { AIResponseDisplay } from '@/components/ai/AIResponseDisplay';
 
 export default function KnowledgeBase() {
     const dispatch = useDispatch();
@@ -28,12 +21,25 @@ export default function KnowledgeBase() {
 
     const {
         loading,
-        answer,
         selectedModel,
         setSelectedModel,
-        generateAnswer,
-        setAnswer
+        generateAnswer
     } = useChat({ type: 'knowledge' });
+
+    const {
+        handleGenerateAnswer,
+        error
+    } = useAIResponse({
+        generateAnswer,
+        onSuccess: (content) => {
+            if (selectedItem) {
+                setSelectedItem({ ...selectedItem, answer: content });
+            }
+        },
+        onError: () => {
+            setSelectedItem(null);
+        }
+    });
 
     useEffect(() => {
         dispatch(fetchDataRequest());
@@ -55,68 +61,91 @@ export default function KnowledgeBase() {
 
     const handleItemClick = async (item) => {
         setSelectedItem(item);
-        await generateAnswer(
-            item.content,
-            'knowledgeBase.prompts.chatInstruction'
-        );
+        try {
+            await handleGenerateAnswer(item.content);
+        } catch (error) {
+            console.error('Failed to generate answer:', error);
+        }
     };
 
     const handleRegenerateAnswer = async () => {
         if (!selectedItem) return;
-        await generateAnswer(
-            selectedItem.content,
-            'knowledgeBase.prompts.chatInstruction'
-        );
+        await generateAnswer(selectedItem.content);
     };
 
     const renderModelSelector = () => (
-        <div className="flex items-center gap-2 mb-4">
-            <Select
-                value={selectedModel}
-                onValueChange={setSelectedModel}
-                disabled={loading}
-            >
-                <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder={t('knowledgeBase.models.select')} />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="gpt-3.5-turbo">
-                        <div className="flex items-center gap-2">
-                            <Zap className="w-4 h-4" />
-                            <span>GPT-3.5 Turbo</span>
+        <ModelSelector
+            selectedModel={selectedModel}
+            onModelChange={setSelectedModel}
+            onRegenerate={handleRegenerateAnswer}
+            loading={loading}
+            disabled={!selectedItem}
+            type="knowledge"
+        />
+    );
+
+    const renderSidebar = () => (
+        <>
+            <div className="sticky top-0 bg-white z-10 pb-4 pr-6 pl-6">
+                <div className="space-y-2 mb-4">
+                    <h2 className="text-xl font-semibold">
+                        {t('knowledgeBase.title')}
+                    </h2>
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                        <SearchInput
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder={t('knowledgeBase.searchPlaceholder')}
+                            className="pl-10"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <div className="space-y-4">
+                {knowledge.map((category, categoryIndex) => {
+                    const filteredItems = filterItems(category.items || [], searchQuery);
+                    if (filteredItems.length === 0 && searchQuery) return null;
+
+                    return (
+                        <div key={categoryIndex} className="space-y-2">
+                            <CategoryHeader
+                                isExpanded={expandedCategories[categoryIndex]}
+                                title={category.category}
+                                itemCount={filteredItems.length}
+                                onClick={() => toggleCategory(categoryIndex)}
+                            />
+                            {expandedCategories[categoryIndex] && (
+                                <div className="ml-6 space-y-1">
+                                    {filteredItems.map((item, itemIndex) => (
+                                        <button
+                                            key={itemIndex}
+                                            onClick={() => handleItemClick(item)}
+                                            className={cn(
+                                                "w-full text-left px-2 py-1 rounded text-sm",
+                                                selectedItem?.content === item.content
+                                                    ? "bg-purple-100 text-purple-900"
+                                                    : "hover:bg-gray-100"
+                                            )}
+                                        >
+                                            {searchQuery ? (
+                                                <HighlightText
+                                                    text={item.content}
+                                                    search={searchQuery}
+                                                />
+                                            ) : (
+                                                item.content
+                                            )}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                         </div>
-                    </SelectItem>
-                    <SelectItem value="gpt-4-turbo-preview">
-                        <div className="flex items-center gap-2">
-                            <Zap className="w-4 h-4" />
-                            <span>GPT-4 Turbo</span>
-                        </div>
-                    </SelectItem>
-                </SelectContent>
-            </Select>
-            <Button
-                variant="outline"
-                size="icon"
-                onClick={handleRegenerateAnswer}
-                disabled={!selectedItem || loading}
-                className="h-10 w-10"
-                title={t('knowledgeBase.actions.regenerate')}
-            >
-                <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
-            </Button>
-            <Button
-                variant="outline"
-                size="icon"
-                onClick={() => {
-                    dispatch(clearCachedAnswers());
-                    setAnswer("");
-                }}
-                className="h-10 w-10"
-                title={t('knowledgeBase.actions.clearCache')}
-            >
-                <Trash2 className="h-4 w-4" />
-            </Button>
-        </div>
+                    );
+                })}
+            </div>
+        </>
     );
 
     const renderContent = () => (
@@ -127,34 +156,15 @@ export default function KnowledgeBase() {
                         <h1 className="text-2xl font-semibold">
                             {selectedItem.content}
                         </h1>
-                        <div className="flex items-center gap-2 mt-2">
-                            <Badge variant={
-                                selectedItem.status === t('knowledgeBase.status.completed')
-                                    ? "success"
-                                    : "secondary"
-                            }>
-                                {t(`knowledgeBase.status.${selectedItem.status.toLowerCase()}`)}
-                            </Badge>
-                        </div>
                         {renderModelSelector()}
                     </div>
-
                     <div className="rounded-lg bg-white shadow">
-                        {loading ? (
-                            <div className="p-6 flex items-center gap-2 text-gray-500">
-                                <span className="animate-spin">⏳</span>
-                                {t('knowledgeBase.messages.loading')}
-                            </div>
-                        ) : answer ? (
-                            <MarkdownContent
-                                content={answer}
-                                className="p-6"
-                            />
-                        ) : (
-                            <p className="p-6 text-gray-500">
-                                {t('knowledgeBase.messages.selectTopic')}
-                            </p>
-                        )}
+                        <AIResponseDisplay
+                            loading={loading}
+                            content={selectedItem?.answer || null}
+                            error={error}
+                            emptyMessage={t('knowledge.selectTopic')}
+                        />
                     </div>
                 </div>
             ) : (
@@ -167,100 +177,10 @@ export default function KnowledgeBase() {
 
     return (
         <Layout>
-            <div className="container-fluid h-[calc(100vh-4rem)]">
-                <div className="grid grid-cols-[320px,1fr] h-full gap-6">
-                    {/* Sidebar */}
-                    <div className="border-r overflow-y-auto">
-                        <div className="sticky top-0 bg-white z-10 pb-4 pr-6 pl-6">
-                            <div className="space-y-2 mb-4">
-                                <h2 className="text-xl font-semibold">
-                                    {t('knowledgeBase.title')}
-                                </h2>
-                                <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                                    <Input
-                                        type="text"
-                                        placeholder={t('knowledgeBase.searchPlaceholder')}
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="pl-10"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="space-y-4">
-                            {knowledge.map((category, categoryIndex) => {
-                                const filteredItems = filterItems(category.items, searchQuery);
-                                if (filteredItems.length === 0 && searchQuery) return null;
-
-                                return (
-                                    <div key={categoryIndex} className="space-y-2">
-                                        <button
-                                            onClick={() => toggleCategory(categoryIndex)}
-                                            className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900"
-                                        >
-                                            {expandedCategories[categoryIndex] ?
-                                                <ChevronDown className="h-4 w-4" /> :
-                                                <ChevronRight className="h-4 w-4" />
-                                            }
-                                            {category.category}
-                                        </button>
-
-                                        {expandedCategories[categoryIndex] && (
-                                            <div className="ml-6 space-y-1">
-                                                {filteredItems.map((item, itemIndex) => (
-                                                    <button
-                                                        key={itemIndex}
-                                                        onClick={() => handleItemClick(item)}
-                                                        className={cn(
-                                                            "w-full text-left px-2 py-1 rounded text-sm",
-                                                            selectedItem?.content === item.content
-                                                                ? "bg-purple-100 text-purple-900"
-                                                                : "hover:bg-gray-100"
-                                                        )}
-                                                    >
-                                                        {searchQuery ? (
-                                                            <HighlightText
-                                                                text={item.content}
-                                                                search={searchQuery}
-                                                            />
-                                                        ) : (
-                                                            item.content
-                                                        )}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    {/* Content Area */}
-                    {renderContent()}
-                </div>
-            </div>
+            <SidebarLayout
+                sidebar={renderSidebar()}
+                content={renderContent()}
+            />
         </Layout>
-    );
-}
-
-function HighlightText({ text, search }) {
-    if (!search) return text;
-
-    const parts = text.split(new RegExp(`(${search})`, 'gi'));
-    return (
-        <span>
-            {parts.map((part, i) =>
-                part.toLowerCase() === search.toLowerCase() ? (
-                    <span key={i} className="bg-yellow-100 px-1 rounded">
-                        {part}
-                    </span>
-                ) : (
-                    part
-                )
-            )}
-        </span>
     );
 }

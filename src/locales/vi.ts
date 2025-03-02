@@ -3,7 +3,7 @@ export default {
     search: 'Tìm kiếm',
     loading: 'Đang tải...',
     error: 'Lỗi',
-    selectTopic: 'Chọn một chủ đề để xem thông tin chi tiết.',
+    selectTopic: 'Chọn một chủ đề để xem nội dung',
     generateAnswer: 'Đang tạo câu trả lời...',
   },
   nav: {
@@ -49,8 +49,8 @@ export default {
     },
   },
   knowledgeBase: {
-    title: 'Cơ Sở Kiến Thức',
-    searchPlaceholder: 'Tìm kiếm...',
+    title: 'Cơ sở kiến thức',
+    searchPlaceholder: 'Tìm kiếm chủ đề...',
     status: {
       pending: 'Chưa học',
       inProgress: 'Đang học',
@@ -59,8 +59,8 @@ export default {
     },
     messages: {
       loading: 'Đang tạo giải thích...',
-      selectTopic: 'Chọn một chủ đề để xem chi tiết.',
-      selectFromSidebar: 'Chọn một chủ đề từ thanh bên.',
+      selectTopic: 'Chọn một chủ đề từ danh sách để xem giải thích',
+      selectFromSidebar: 'Vui lòng chọn một chủ đề từ thanh bên để xem nội dung.',
       error: 'Không thể tạo giải thích. Vui lòng thử lại.',
       rateLimitError: 'Đã vượt quá giới hạn API. Vui lòng thử lại sau.',
       cacheClearedSuccess: 'Đã xóa tất cả nội dung trong bộ nhớ đệm',
@@ -94,7 +94,7 @@ export default {
     },
     messages: {
       loading: 'Đang tạo câu trả lời...',
-      selectQuestion: 'Chọn một câu hỏi để xem câu trả lời.',
+      selectQuestion: 'Chọn một câu hỏi để xem gợi ý câu trả lời',
       selectFromSidebar: 'Chọn một câu hỏi từ thanh bên để xem câu trả lời.',
       rateLimitError: 'Đã vượt quá giới hạn API. Vui lòng thử lại sau hoặc kiểm tra hạn mức API của bạn.',
       error: 'Xin lỗi, không thể tạo câu trả lời. Vui lòng thử lại.',

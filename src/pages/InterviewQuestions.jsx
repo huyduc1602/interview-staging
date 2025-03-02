@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchDataRequest, clearCachedAnswers } from '@/store/interview/slice';
 import { useChat } from '@/hooks/useChat';
+import { useAIResponse } from '@/hooks/useAIResponse';
 import { Layout, SidebarLayout, CategoryHeader } from '@/layouts';
 import { SearchInput, HighlightText, LoadingSpinner, MarkdownContent } from '@/components/ui';
 import { cn } from "@/lib/utils";
@@ -19,6 +20,19 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { ModelSelector } from '@/components/ui/model-selector';
+import { AIResponseDisplay } from '@/components/ai/AIResponseDisplay';
+
+/**
+ * Component for displaying and managing a list of interview questions.
+ * 
+ * This component allows users to shuffle, search, and select interview questions
+ * from various categories. It uses Redux to manage state and includes features
+ * such as category selection, question filtering, and AI-generated answers.
+ * 
+ * The component fetches questions from the store on mount and provides options
+ * to regenerate answers using AI models. Users can toggle categories, view
+ * questions in a sidebar, and see detailed answers in the main content area.
+ */
 
 export default function InterviewQuestions() {
     const dispatch = useDispatch();
@@ -33,12 +47,26 @@ export default function InterviewQuestions() {
 
     const {
         loading,
-        answer,
         selectedModel,
         setSelectedModel,
         generateAnswer,
         setAnswer
     } = useChat({ type: 'questions' });
+
+    const {
+        handleGenerateAnswer,
+        error
+    } = useAIResponse({
+        generateAnswer,
+        onSuccess: (content) => {
+            if (selectedQuestion) {
+                setSelectedQuestion({ ...selectedQuestion, answer: content });
+            }
+        },
+        onError: () => {
+            setSelectedQuestion(null);
+        }
+    });
 
     useEffect(() => {
         dispatch(fetchDataRequest());
@@ -60,10 +88,11 @@ export default function InterviewQuestions() {
 
     const handleQuestionClick = async (question) => {
         setSelectedQuestion(question);
-        await generateAnswer(
-            question.question,
-            'interviewQuestions.prompts.chatInstruction'
-        );
+        try {
+            await handleGenerateAnswer(question.question);
+        } catch (error) {
+            console.error('Failed to generate answer:', error);
+        }
     };
 
     const handleCategorySelect = (category) => {
@@ -319,20 +348,12 @@ export default function InterviewQuestions() {
                         {renderModelSelector()}
                     </div>
                     <div className="rounded-lg bg-white shadow">
-                        {loading ? (
-                            <div className="p-6">
-                                <LoadingSpinner />
-                            </div>
-                        ) : answer ? (
-                            <MarkdownContent
-                                content={answer}
-                                className="p-6"
-                            />
-                        ) : (
-                            <p className="p-6 text-gray-500">
-                                {t('interviewQuestions.messages.selectQuestion')}
-                            </p>
-                        )}
+                        <AIResponseDisplay
+                            loading={loading}
+                            content={selectedQuestion?.answer || null}
+                            error={error}
+                            emptyMessage={t('interview.selectQuestion')}
+                        />
                     </div>
                 </div>
             ) : (

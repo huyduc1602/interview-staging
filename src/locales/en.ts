@@ -3,7 +3,7 @@ export default {
     search: 'Search',
     loading: 'Loading...',
     error: 'Error',
-    selectTopic: 'Select a topic to get detailed information.',
+    selectTopic: 'Select a topic to view its content',
     generateAnswer: 'Generating answer...',
   },
   nav: {
@@ -50,7 +50,8 @@ export default {
   },
   knowledgeBase: {
     title: 'Knowledge Base',
-    searchPlaceholder: 'Search...',
+    searchPlaceholder: 'Search topics...',
+    selectTopic: 'Select a topic from the list to see its explanation',
     status: {
       pending: 'Pending',
       inProgress: 'In Progress',
@@ -59,8 +60,8 @@ export default {
     },
     messages: {
       loading: 'Generating explanation...',
-      selectTopic: 'Select a topic to get detailed information.',
-      selectFromSidebar: 'Select a knowledge item from the sidebar to view details.',
+      selectTopic: 'Select a topic from the list to view its explanation',
+      selectFromSidebar: 'Please select a topic from the sidebar to view its content',
       error: 'Failed to generate explanation. Please try again.',
       rateLimitError: 'API rate limit exceeded. Please try again later.',
       cacheClearedSuccess: 'All cached content has been cleared',
@@ -94,7 +95,7 @@ export default {
     },
     messages: {
       loading: 'Generating answer...',
-      selectQuestion: 'Select a question to view the answer.',
+      selectQuestion: 'Select a question to see the suggested answer',
       selectFromSidebar: 'Select a question from the sidebar to view the answer.',
       rateLimitError: 'API rate limit exceeded. Please try again later or check your API quota.',
       error: 'Sorry, failed to generate response. Please try again.',
@@ -124,8 +125,8 @@ export default {
       noResponse: 'No response from AI',
       unknown: 'An unknown error occurred',
       apiError: 'Failed to get response from ChatGPT',
-      invalidKey: 'Invalid API key',                                  
-      rateLimit: 'Rate limit exceeded. Please try again later.', 
+      invalidKey: 'Invalid API key',
+      rateLimit: 'Rate limit exceeded. Please try again later.',
       networkError: 'Network connection error',
       geminiApiError: 'Gemini API Error: {message}',
       openchatApiError: 'OpenChat API Error: {message}',
@@ -152,6 +153,30 @@ export default {
       retry: "Retry",
       clear: "Clear chat",
       save: "Save to questions"
+    }
+  },
+  knowledge: {
+    title: "Knowledge Base",
+    searchPlaceholder: "Search topics...",
+    selectTopic: "Please select a topic from the list on the left to see its explanation.",
+    noResults: "No topics found for your search"
+  },
+  interview: {
+    title: "Interview Questions",
+    searchPlaceholder: "Search questions...",
+    selectQuestion: "Select a question from the list to see the suggested answer.",
+    messages: {
+      selectFromSidebar: "Please select a question from the sidebar"
+    },
+    categories: {
+      select: "Select categories",
+      selectCount: "{{selected}}/{{total}} categories",
+      more: "more"
+    },
+    tooltips: {
+      search: "Search questions",
+      shuffle: "Shuffle selected categories",
+      collapse: "Collapse categories"
     }
   }
 }

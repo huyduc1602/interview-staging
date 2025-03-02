@@ -17,6 +17,7 @@ export function useChat({ type }: { type: 'chat' | 'knowledge' | 'questions' }) 
   const [selectedModel, setSelectedModel] = useState<AIModel>('gpt-3.5-turbo-0125');
   const [loading, setLoading] = useState(false);
   const [usage, setUsage] = useState<TokenUsage | null>(null);
+  const [answer, setAnswer] = useState<string | null>(null);
 
   const generateAnswer = async (input: string): Promise<string> => {
     try {
@@ -79,5 +80,7 @@ export function useChat({ type }: { type: 'chat' | 'knowledge' | 'questions' }) 
     setSelectedModel,
     generateAnswer,
     usage,
+    answer,
+    setAnswer
   };
 }

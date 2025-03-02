@@ -9,6 +9,7 @@ import { SaveDialog } from '@/components/ui/save-dialog';
 import { MessageItem } from '@/components/chat/message-item';
 import { SendHorizontal, AlertCircle, Sparkles } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AIResponseDisplay } from '@/components/ai/AIResponseDisplay';
 
 interface Message {
   role: 'user' | 'assistant' | 'error';
@@ -143,7 +144,13 @@ export default function ChatPage() {
               loading={loading && index === messages.length - 1}
               usage={index === messages.length - 1 ? usage : undefined}
               showSave={index !== 0} // Hide save button for welcome message
-            />
+            >
+              <AIResponseDisplay
+                loading={loading && index === messages.length - 1}
+                content={message.content}
+                error={error}
+              />
+            </MessageItem>
           ))}
           <div ref={messagesEndRef} />
         </div>
