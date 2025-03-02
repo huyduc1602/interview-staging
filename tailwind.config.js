@@ -3,6 +3,7 @@ export default {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -58,5 +59,11 @@ export default {
   },
   plugins: [
     import('@tailwindcss/typography'),
+    import('tailwind-scrollbar'),
   ],
+  variants: {
+    extend: {
+      scrollbar: ['rounded', 'dark']
+    }
+  }
 }
