@@ -1,4 +1,4 @@
-declare module './store' {
+declare module 'store' {
     const store: any;
     export default store;
 }
