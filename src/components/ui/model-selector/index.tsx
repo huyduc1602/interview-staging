@@ -50,13 +50,13 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
             <SelectLabel className="px-2 py-1.5 text-xs text-muted-foreground">
               OpenAI
             </SelectLabel>
-            <SelectItem value="gpt-3.5-turbo-0125">
+            <SelectItem value={AIModel.GPT35_0125}>
               <div className="flex items-center gap-2">
                 <Zap className="w-4 h-4 text-blue-500" />
                 <span>GPT-3.5 Turbo</span>
               </div>
             </SelectItem>
-            <SelectItem value="gpt-4-turbo-preview">
+            <SelectItem value={AIModel.GPT4}>
               <div className="flex items-center gap-2">
                 <Zap className="w-4 h-4 text-blue-500" />
                 <span>GPT-4 Turbo</span>
@@ -70,21 +70,21 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
             <SelectLabel className="px-2 py-1.5 text-xs text-muted-foreground">
               Free Alternatives
             </SelectLabel>
-            <SelectItem value="gemini-pro">
+            <SelectItem value={AIModel.GEMINI}>
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-green-500" />
                 <span>Gemini Pro</span>
                 <span className="ml-auto text-xs text-green-500">Google</span>
               </div>
             </SelectItem>
-            <SelectItem value="mistral-small">
+            <SelectItem value={AIModel.MISTRAL}>
               <div className="flex items-center gap-2">
                 <Bot className="w-4 h-4 text-purple-500" />
                 <span>Mistral Small</span>
                 <span className="ml-auto text-xs text-purple-500">Mistral</span>
               </div>
             </SelectItem>
-            <SelectItem value="meta-llama/Llama-3.3-70B-Instruct-Turbo-Free">
+            <SelectItem value={AIModel.OPENCHAT}>
               <div className="flex items-center gap-2">
                 <Stars className="w-4 h-4 text-orange-500" />
                 <span>OpenChat 3.5</span>
