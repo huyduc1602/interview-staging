@@ -14,7 +14,7 @@ import {
 import { AIModel } from "@/services/aiServices/types";
 
 interface ModelSelectorProps {
-  selectedModel: AIModel;
+  selectedModel?: AIModel;  // Make optional
   onModelChange: (model: AIModel) => void;
   onRegenerate?: () => void;
   onClearCache?: () => void;
@@ -24,7 +24,7 @@ interface ModelSelectorProps {
 }
 
 export const ModelSelector: React.FC<ModelSelectorProps> = ({
-  selectedModel,
+  selectedModel = AIModel.GPT35_0125,  // Add default value
   onModelChange,
   ...props
 }) => {
@@ -38,6 +38,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
     <div className="flex items-center gap-2 mb-4">
       <Select
         value={selectedModel}
+        defaultValue={AIModel.GPT35_0125}
         onValueChange={handleModelChange}
         disabled={props.loading}
       >

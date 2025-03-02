@@ -19,7 +19,7 @@ interface ChatOptions {
 }
 
 export function useChat(options: ChatOptions) {
-  const [selectedModel, setSelectedModel] = useState<AIModelType>(AIModel.GPT35);
+  const [selectedModel, setSelectedModel] = useState<AIModelType>(AIModel.GPT35_0125);
   const [loading, setLoading] = useState(false);
   const [usage, setUsage] = useState<TokenUsage | null>(null);
   const [answer, setAnswer] = useState<string | null>(null);
