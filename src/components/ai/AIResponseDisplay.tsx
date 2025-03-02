@@ -20,41 +20,37 @@ export function AIResponseDisplay({
 }: AIResponseDisplayProps) {
     const { t } = useTranslation();
 
-    // Show loading state first
+    // Show loading state
     if (loading) {
         return (
-            <div className={cn("flex items-center justify-center p-6", className)}>
+            <div className={cn("flex items-center justify-center p-4", className)}>
                 <LoadingSpinner />
             </div>
         );
     }
 
-    // Then show error if present
+    // Show error if present
     if (error) {
         return (
-            <div className={cn("p-6", className)}>
-                <div className="text-red-500 whitespace-pre-wrap">{error}</div>
-            </div>
-        );
-    }
-
-    // Show empty message only if no content and not loading
-    if (!content && !loading) {
-        return (
-            <div className={cn("p-6", className)}>
-                <div className="text-gray-500">
-                    {emptyMessage || t('common.selectTopic')}
-                </div>
+            <div className={cn("text-red-500 p-4", className)}>
+                {error}
             </div>
         );
     }
 
     // Show content if available
-    return (
-        <article className={cn("p-6", className)}>
-            <div className="prose prose-slate dark:prose-invert prose-pre:bg-gray-800 prose-pre:text-gray-100 max-w-none">
-                <MarkdownContent content={content || ''} />
+    if (content) {
+        return (
+            <div className={cn("prose dark:prose-invert max-w-none p-4", className)}>
+                <MarkdownContent content={content} />
             </div>
-        </article>
+        );
+    }
+
+    // Show empty message
+    return (
+        <div className={cn("text-gray-500 p-4", className)}>
+            {emptyMessage || 'No content to display'}
+        </div>
     );
 }

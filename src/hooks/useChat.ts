@@ -56,7 +56,9 @@ export function useChat(options: ChatOptions) {
           if (isOpenAIResponse(response)) {
             setUsage(response.usage ?? null);
             setIsFirstQuestion(false);
-            return response.choices[0].message.content;
+            const content = response.choices[0].message.content;
+            setAnswer(content);
+            return content;
           }
           break;
 
@@ -65,7 +67,9 @@ export function useChat(options: ChatOptions) {
           if (isGeminiResponse(response)) {
             setUsage(null);
             setIsFirstQuestion(false);
-            return response.candidates[0].content.parts[0].text;
+            const content = response.candidates[0].content.parts[0].text;
+            setAnswer(content);
+            return content;
           }
           break;
 
@@ -74,7 +78,9 @@ export function useChat(options: ChatOptions) {
           if (isMistralResponse(response)) {
             setUsage(response.usage ?? null);
             setIsFirstQuestion(false);
-            return response.choices[0].message.content;
+            const content = response.choices[0].message.content;
+            setAnswer(content);
+            return content;
           }
           break;
 
@@ -83,7 +89,9 @@ export function useChat(options: ChatOptions) {
           if (isOpenChatResponse(response)) {
             setUsage(response.usage ?? null);
             setIsFirstQuestion(false);
-            return response.choices[0].message.content;
+            const content = response.choices[0].message.content;
+            setAnswer(content);
+            return content;
           }
           break;
 

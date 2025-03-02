@@ -18,7 +18,8 @@ const HomePage = () => {
         loading,
         generateAnswer,
         answer,
-        error
+        error,
+        setAnswer  // Make sure useChat returns this
     } = useChat({ type: 'chat' });
 
     const handleChatSubmit = async (e) => {
@@ -26,7 +27,8 @@ const HomePage = () => {
         if (!chatInput.trim()) return;
 
         try {
-            await generateAnswer(chatInput);
+            const response = await generateAnswer(chatInput);
+            setAnswer(response);  // Set the answer explicitly
             setChatInput('');
         } catch (error) {
             console.error('Chat error:', error);
