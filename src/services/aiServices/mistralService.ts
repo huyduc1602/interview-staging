@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { handleAPIError } from './utils';
-import { AIModel, MistralResponse } from './types';
+import { MistralResponse } from './types';
 
 const MISTRAL_API_KEY = import.meta.env.VITE_MISTRAL_API_KEY;
 const API_URL = 'https://api.mistral.ai/v1/chat/completions';
@@ -34,16 +34,6 @@ export async function generateMistralResponse(prompt: string): Promise<MistralRe
 
     if (!response.data?.choices?.[0]?.message?.content) {
       throw new Error('Invalid response format from Mistral API');
-    }
-
-    interface MistralChoice {
-      index: number;
-      message: {
-      role: string;
-      tool_calls: any[] | null;
-      content: string;
-      };
-      finish_reason: string;
     }
 
     interface MistralAPIResponse {

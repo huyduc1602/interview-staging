@@ -1,6 +1,5 @@
 import { LoadingSpinner } from '@/components/ui';
 import { MarkdownContent } from '@/components/ui/markdownContent';
-import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 
 interface AIResponseDisplayProps {

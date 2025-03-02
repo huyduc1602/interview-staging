@@ -52,61 +52,31 @@ export async function generateOpenChatResponse(prompt: string): Promise<OpenChat
       message: Message;
     }
 
-    interface Usage {
-      prompt_tokens: number;
-      completion_tokens: number;
-      total_tokens: number;
-    }
-
-    interface APIResponse {
-      id: string;
-      object: string;
-      created: number;
-      model: string;
-      prompt: any[];
-      choices: Array<{
-        finish_reason: string;
-        seed: number;
-        logprobs: null;
-        index: number;
+    const formattedResponse: OpenChatResponse = {
+      id: response.data.id || '',
+      object: response.data.object || '',
+      created: response.data.created || 0,
+      model: response.data.model || '',
+      prompt: response.data.prompt || [],
+      choices: response.data.choices.map((choice: Choice): Choice => ({
+        finish_reason: choice.finish_reason || '',
+        seed: choice.seed || 0,
+        logprobs: null,
+        index: choice.index || 0,
         message: {
-          role: string;
-          content: string;
-          tool_calls?: any[];
+          role: choice.message.role || '',
+          content: choice.message.content || '',
+          tool_calls: choice.message.tool_calls || []
         }
-      }>;
-      usage?: {
-        prompt_tokens: number;
-        completion_tokens: number;
-        total_tokens: number;
-      };
-    }
+      })),
+      usage: response.data.usage ? {
+        prompt_tokens: response.data.usage.prompt_tokens,
+        completion_tokens: response.data.usage.completion_tokens,
+        total_tokens: response.data.usage.total_tokens
+      } : undefined
+    } as OpenChatResponse;
 
-        const formattedResponse: OpenChatResponse = {
-          id: response.data.id || '',
-          object: response.data.object || '',
-          created: response.data.created || 0,
-          model: response.data.model || '',
-          prompt: response.data.prompt || [],
-          choices: response.data.choices.map((choice: Choice): Choice => ({
-            finish_reason: choice.finish_reason || '',
-            seed: choice.seed || 0,
-            logprobs: null,
-            index: choice.index || 0,
-            message: {
-              role: choice.message.role || '',
-              content: choice.message.content || '',
-              tool_calls: choice.message.tool_calls || []
-            }
-          })),
-          usage: response.data.usage ? {
-            prompt_tokens: response.data.usage.prompt_tokens,
-            completion_tokens: response.data.usage.completion_tokens,
-            total_tokens: response.data.usage.total_tokens
-          } : undefined
-        } as OpenChatResponse;
-
-        return formattedResponse;
+    return formattedResponse;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('Llama API Error:', {
