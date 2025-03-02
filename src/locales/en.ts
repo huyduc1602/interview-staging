@@ -5,6 +5,12 @@ export default {
     error: 'Error',
     selectTopic: 'Select a topic to view its content',
     generateAnswer: 'Generating answer...',
+    send: 'Send',
+    you: 'You',
+    assistant: 'Assistant',
+    errors: {
+      failedToGetAnswer: "Sorry, I couldn't generate an answer. Please try again."
+    }
   },
   nav: {
     home: 'Interview Hub',
@@ -159,7 +165,11 @@ export default {
     title: "Knowledge Base",
     searchPlaceholder: "Search topics...",
     selectTopic: "Please select a topic from the list on the left to see its explanation.",
-    noResults: "No topics found for your search"
+    noResults: "No topics found for your search",
+    followUp: {
+      title: "Ask Follow-up Questions",
+      inputPlaceholder: "Ask a question about this topic..."
+    }
   },
   interview: {
     title: "Interview Questions",

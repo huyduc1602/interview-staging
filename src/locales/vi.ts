@@ -5,6 +5,12 @@ export default {
     error: 'Lỗi',
     selectTopic: 'Chọn một chủ đề để xem nội dung',
     generateAnswer: 'Đang tạo câu trả lời...',
+    "send": "Gửi",
+    "you": "Bạn",
+    "assistant": "Trợ lý",
+    errors: {
+      failedToGetAnswer: "Xin lỗi, tôi không thể tạo ra câu trả lời. Vui lòng thử lại."
+    }
   },
   nav: {
     home: 'Trung tâm Phỏng vấn',
@@ -153,6 +159,16 @@ export default {
       retry: "Thử lại",
       clear: "Xóa chat",
       save: "Lưu vào câu hỏi"
+    }
+  },
+  knowledge: {
+    title: "Cơ sở kiến thức",
+    searchPlaceholder: "Tìm kiếm chủ đề...",
+    selectTopic: "Vui lòng chọn một chủ đề từ danh sách bên trái để xem giải thích.",
+    noResults: "Không tìm thấy chủ đề nào phù hợp",
+    followUp: {
+      title: "Đặt câu hỏi thêm",
+      inputPlaceholder: "Đặt câu hỏi về chủ đề này..."
     }
   }
 };
