@@ -42,6 +42,14 @@ export default {
         description: 'Practice with our curated list of technical questions and get AI-powered responses.',
         action: 'Start Practicing',
       },
+      chat: {
+        welcome: "Welcome, %{name}! How can I help you today?",
+        startPrompt: "Ask me anything about programming, interviews, or technical topics!",
+        inputPlaceholder: "Type your message here...",
+        title: 'AI Chat Assistant',
+        description: 'Have a conversation with our AI assistant to get instant help with your programming questions.',
+        action: 'Start chatting'
+      }
     },
     stats: {
       knowledgeTopics: {
@@ -61,6 +69,11 @@ export default {
         label: 'AI Support',
       },
     },
+    chat: {
+      welcome: "Welcome, %{name}! How can I help you today?",
+      startPrompt: "Ask me anything about programming, interviews, or technical topics!",
+      inputPlaceholder: "Type your message here..."
+    }
   },
   knowledgeBase: {
     title: 'Knowledge Base',
@@ -198,11 +211,8 @@ export default {
     }
   },
   auth: {
-    login: {
-      title: "Login to Save Your Chat History",
-      email: "Enter your email",
-      submit: "Login"
-    },
-    logout: "Sign out"
+    login: "Sign In",
+    loginTitle: "Welcome Back!",
+    logout: "Sign Out"
   }
 }
