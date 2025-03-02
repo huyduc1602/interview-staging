@@ -1,4 +1,4 @@
-import { MarkdownContent } from '@/components/ui/markdown-content';
+import { MarkdownContent } from '@/components/ui/markdownContent';
 import { Button } from '@/components/ui/button';
 import { Save, AlertCircle, User, Bot } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -22,12 +22,12 @@ export interface MessageItemProps {
   children?: React.ReactNode;
 }
 
-export function MessageItem({ 
-  message, 
-  onSave, 
+export function MessageItem({
+  message,
+  onSave,
   loading,
   showSave = true,
-  usage 
+  usage
 }: MessageItemProps) {
   const isUser = message.role === 'user';
   const isError = message.role === 'error';

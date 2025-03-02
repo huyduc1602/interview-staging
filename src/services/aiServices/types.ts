@@ -1,10 +1,13 @@
 export enum AIModel {
   GPT35 = 'gpt-3.5-turbo',
-  GPT4 = 'gpt-4',
-  GEMINI = 'gemini',
-  MISTRAL = 'mistral',
-  OPENCHAT = 'openchat'
+  GPT4 = 'gpt-4-turbo-preview',
+  GPT35_0125 = 'gpt-3.5-turbo-0125',
+  GEMINI = 'gemini-pro',
+  MISTRAL = 'mistral-small',
+  OPENCHAT = 'meta-llama/Llama-3.3-70B-Instruct-Turbo-Free'
 }
+
+export type AIModelType = AIModel | string;
 
 export interface TokenUsage {
   prompt_tokens: number;
@@ -13,7 +16,7 @@ export interface TokenUsage {
 }
 
 export interface BaseResponse {
-  model: AIModel;
+  model?: AIModelType;
   usage?: TokenUsage;
 }
 
@@ -62,12 +65,17 @@ export interface GeminiResponse extends BaseResponse {
 
 export interface MistralResponse extends BaseResponse {
   id: string;
+  object: string;
+  created: number;
+  prompt: any[];
   choices: Array<{
     index: number;
+    seed?: number;
+    logprobs: null;
     message: {
       role: string;
-      tool_calls: null | any;
       content: string;
+      tool_calls: any[];
     };
     finish_reason: string;
   }>;
@@ -77,12 +85,20 @@ export interface OpenChatResponse extends BaseResponse {
   id: string;
   object: string;
   created: number;
-  content: string;
-  prompt: string;
+  model: string;
+  prompt: any[];
   choices: Array<{
-    message: string;
     finish_reason: string;
+    seed: number;
+    logprobs: null;
+    index: number;
+    message: {
+      role: string;
+      content: string;
+      tool_calls: any[];
+    };
   }>;
+  usage?: TokenUsage;
 }
 
 export interface ApiResponse {
@@ -115,12 +131,14 @@ export function isMistralResponse(response: AIResponse): response is MistralResp
 }
 
 export function isOpenChatResponse(response: AIResponse): response is OpenChatResponse {
-  return 'object' in response &&
-    response.object === 'chat.completion' &&
+  return (
     'choices' in response &&
     Array.isArray(response.choices) &&
     response.choices.length > 0 &&
-    typeof response.choices[0].message === 'string';
+    'message' in response.choices[0] &&
+    'content' in response.choices[0].message &&
+    typeof response.choices[0].message.content === 'string'
+  );
 }
 
 export const processGeminiResponse = (response: any): GeminiResponse => {

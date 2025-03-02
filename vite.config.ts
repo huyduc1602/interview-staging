@@ -4,10 +4,14 @@ import path from 'path';
 
 export default defineConfig({
     plugins: [react()],
-    base: '/interview/', // Your repository name
     resolve: {
         alias: {
             '@': path.resolve(__dirname, './src'),
         },
     },
+    server: {
+        watch: {
+            usePolling: true
+        }
+    }
 });

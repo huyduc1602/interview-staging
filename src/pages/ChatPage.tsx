@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { Layout } from '@/layouts';
-import { useChat } from '@/hooks/useChat';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +10,7 @@ import { SendHorizontal, AlertCircle, Sparkles } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AIResponseDisplay } from '@/components/ai/AIResponseDisplay';
 import { AIModel, TokenUsage } from '../services/aiServices/types';
+import { useChat } from '@/hooks/useChat';
 
 interface Message {
   role: 'user' | 'assistant' | 'error';
@@ -18,7 +18,7 @@ interface Message {
 }
 
 interface ChatPageProps {
-  onModelChange: (model: AIModel) => void;
+  onModelChange?: (model: AIModel) => void;
   tokenUsage?: TokenUsage;
 }
 
@@ -34,16 +34,20 @@ export const ChatPage: React.FC<ChatPageProps> = ({
 
   const {
     loading,
-    selectedModel,
+    selectedModel: selectedModelString,
     setSelectedModel: setModel,
     generateAnswer,
     usage
   } = useChat({ type: 'chat' });
 
+  const selectedModel = selectedModelString as AIModel;
+
   // Update parent component when model changes
   const setSelectedModel = (model: AIModel) => {
     setModel(model);
-    onModelChange(model);
+    if (onModelChange) {  // Check if callback exists
+      onModelChange(model);
+    }
   };
 
   const scrollToBottom = () => {
@@ -207,3 +211,5 @@ export const ChatPage: React.FC<ChatPageProps> = ({
     </Layout>
   );
 }
+
+export default ChatPage;

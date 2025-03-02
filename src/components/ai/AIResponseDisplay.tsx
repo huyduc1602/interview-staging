@@ -1,50 +1,56 @@
 import { LoadingSpinner } from '@/components/ui';
-import { MarkdownContent } from '@/components/ui/markdown-content';
+import { MarkdownContent } from '@/components/ui/markdownContent';
 import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
 
 interface AIResponseDisplayProps {
-  loading: boolean;
-  content: string | null;
-  error: string | null;
-  emptyMessage?: string;
+    loading: boolean;
+    content: string | null;
+    error: string | null;
+    emptyMessage?: string;
+    className?: string;
 }
 
-export function AIResponseDisplay({ 
-  loading, 
-  content, 
-  error,
-  emptyMessage 
+export function AIResponseDisplay({
+    loading,
+    content,
+    error,
+    emptyMessage,
+    className
 }: AIResponseDisplayProps) {
-  const { t } = useTranslation();
+    const { t } = useTranslation();
 
-  if (loading) {
+    if (loading) {
+        return (
+            <div className={cn("flex items-center justify-center p-6", className)}>
+                <LoadingSpinner />
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className={cn("p-6", className)}>
+                <div className="text-red-500 whitespace-pre-wrap">{error}</div>
+            </div>
+        );
+    }
+
+    if (!content) {
+        return (
+            <div className={cn("p-6", className)}>
+                <div className="text-gray-500">
+                    {emptyMessage || t('common.selectTopic')}
+                </div>
+            </div>
+        );
+    }
+
     return (
-      <div className="p-6">
-        <LoadingSpinner />
-      </div>
+        <article className={cn("p-6", className)}>
+            <div className="prose prose-slate dark:prose-invert prose-pre:bg-gray-800 prose-pre:text-gray-100 max-w-none">
+                <MarkdownContent content={content} />
+            </div>
+        </article>
     );
-  }
-
-  if (error) {
-    return (
-      <div className="p-6 text-red-500">
-        {error}
-      </div>
-    );
-  }
-
-  if (!content) {
-    return (
-      <p className="p-6 text-gray-500">
-        {emptyMessage || t('common.selectTopic')}
-      </p>
-    );
-  }
-
-  return (
-    <MarkdownContent
-      content={content}
-      className="p-6"
-    />
-  );
 }

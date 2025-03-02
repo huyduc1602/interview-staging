@@ -3,45 +3,46 @@ import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-    SelectGroup,
-    SelectLabel,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectGroup,
+  SelectLabel,
 } from "@/components/ui/select";
+import { AIModel } from "@/services/aiServices/types";
 
 interface ModelSelectorProps {
-  selectedModel: string;
-  onModelChange: (model: string) => void;
-  onRegenerate: () => void;
-  onClearCache: () => void;
-  loading: boolean;
-  disabled: boolean;
-  type?: 'questions' | 'knowledge' | 'chat';
+  selectedModel: AIModel;
+  onModelChange: (model: AIModel) => void;
+  onRegenerate?: () => void;
+  onClearCache?: () => void;
+  loading?: boolean;
+  disabled?: boolean;
+  type: 'chat' | 'questions' | 'knowledge';
 }
 
-export function ModelSelector({
+export const ModelSelector: React.FC<ModelSelectorProps> = ({
   selectedModel,
   onModelChange,
-  onRegenerate,
-  onClearCache,
-  loading,
-  disabled,
-  type
-}: ModelSelectorProps) {
+  ...props
+}) => {
   const { t } = useTranslation();
+
+  const handleModelChange = (value: string) => {
+    onModelChange(value as AIModel);
+  };
 
   return (
     <div className="flex items-center gap-2 mb-4">
       <Select
         value={selectedModel}
-        onValueChange={onModelChange}
-        disabled={loading}
+        onValueChange={handleModelChange}
+        disabled={props.loading}
       >
         <SelectTrigger className="w-[200px] bg-white dark:bg-gray-950">
-          <SelectValue placeholder={t(`${type}.models.select`)} />
+          <SelectValue placeholder={t(`${props.type}.models.select`)} />
         </SelectTrigger>
         <SelectContent className="bg-white dark:bg-gray-950">
           {/* OpenAI Models */}
@@ -83,7 +84,7 @@ export function ModelSelector({
                 <span className="ml-auto text-xs text-purple-500">Mistral</span>
               </div>
             </SelectItem>
-            <SelectItem value="openchat-3.5">
+            <SelectItem value="meta-llama/Llama-3.3-70B-Instruct-Turbo-Free">
               <div className="flex items-center gap-2">
                 <Stars className="w-4 h-4 text-orange-500" />
                 <span>OpenChat 3.5</span>
@@ -96,22 +97,22 @@ export function ModelSelector({
       <Button
         variant="outline"
         size="icon"
-        onClick={onRegenerate}
-        disabled={disabled || loading}
+        onClick={props.onRegenerate}
+        disabled={props.disabled || props.loading}
         className="h-10 w-10"
-        title={t(`${type}.actions.regenerate`)}
+        title={t(`${props.type}.actions.regenerate`)}
       >
-        <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
+        <RefreshCw className={cn("h-4 w-4", props.loading && "animate-spin")} />
       </Button>
       <Button
         variant="outline"
         size="icon"
-        onClick={onClearCache}
+        onClick={props.onClearCache}
         className="h-10 w-10"
-        title={t(`${type}.actions.clearCache`)}
+        title={t(`${props.type}.actions.clearCache`)}
       >
         <Trash2 className="h-4 w-4" />
       </Button>
     </div>
   );
-}
+};

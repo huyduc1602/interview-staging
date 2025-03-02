@@ -1,7 +1,6 @@
-import { AIResponse } from './types';
 import axios from 'axios';
-import type { MistralResponse } from './types';
 import { handleAPIError } from './utils';
+import { AIModel, MistralResponse } from './types';
 
 const MISTRAL_API_KEY = import.meta.env.VITE_MISTRAL_API_KEY;
 const API_URL = 'https://api.mistral.ai/v1/chat/completions';
@@ -37,12 +36,46 @@ export async function generateMistralResponse(prompt: string): Promise<MistralRe
       throw new Error('Invalid response format from Mistral API');
     }
 
+    interface MistralChoice {
+      index: number;
+      message: {
+      role: string;
+      tool_calls: any[] | null;
+      content: string;
+      };
+      finish_reason: string;
+    }
+
+    interface MistralAPIResponse {
+      id: string;
+      object: string;
+      created: number;
+      choices: Array<{
+      index: number;
+      message: {
+        role: string;
+        tool_calls?: any[] | null;
+        content: string;
+      };
+      finish_reason: string;
+      }>;
+    }
+
+    const response_data: MistralAPIResponse = response.data;
     return {
-      id: response.data.id,
-      content: response.data.choices[0].message.content,
-      model: 'mistral-small',
-      choices: response.data.choices,
-      usage: response.data.usage
+      model: AIModel.MISTRAL,
+      id: response_data.id,
+      object: response_data.object,
+      created: response_data.created,
+      choices: response_data.choices.map((choice): MistralChoice => ({
+      index: choice.index,
+      message: {
+        role: choice.message.role,
+        tool_calls: choice.message.tool_calls || null,
+        content: choice.message.content
+      },
+      finish_reason: choice.finish_reason
+      }))
     };
   } catch (error) {
     if (axios.isAxiosError(error)) {

@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react
 import HomePage from "./pages/HomePage";
 import KnowledgeBase from './pages/KnowledgeBase';
 import InterviewQuestions from './pages/InterviewQuestions';
-import ChatPage from './pages/ChatPage'; // Add this import
+import ChatPage from './pages/ChatPage';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '@/components/ui';
 import './i18n';

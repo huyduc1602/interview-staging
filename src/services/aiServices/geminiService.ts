@@ -1,4 +1,4 @@
-import { AIResponse } from './types';
+import { AIModel, AIResponse } from './types';
 import axios from 'axios';
 import type { GeminiResponse } from './types';
 import { handleAPIError } from './utils';
@@ -40,7 +40,7 @@ export async function generateGeminiResponse(prompt: string): Promise<GeminiResp
 
     return {
       content: response.data.candidates[0].content.parts[0].text,
-      model: 'gemini-pro',
+      model: AIModel.GEMINI,
       candidates: response.data.candidates,
       usage: {
         prompt_tokens: response.data.usageMetadata.promptTokenCount || 0,
