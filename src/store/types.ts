@@ -1,7 +1,7 @@
-import type { KnowledgeCategory } from '@/types/knowledge';
+import { KnowledgeItem, InterviewQuestion } from '@/types';
 
 export interface InterviewState {
-    questions: KnowledgeCategory[];
+    questions: (KnowledgeItem | InterviewQuestion)[];
     loading: boolean;
     error: string | null;
 }
