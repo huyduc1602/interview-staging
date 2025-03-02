@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, type Dispatch, type SetStateAction } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { fetchChatGPTAnswer } from '@/services/aiServices/chatgptService';
 import { generateGeminiResponse } from '@/services/aiServices/geminiService';
 import { generateMistralResponse } from '@/services/aiServices/mistralService';
@@ -15,41 +15,41 @@ import {
 } from '@/services/aiServices/types';
 
 interface UseChatOptions {
-  type: 'chat' | 'questions' | 'knowledge';
+  type: 'knowledge' | 'interview' | 'chat';
 }
 
 interface UseChatReturn {
   loading: boolean;
-  generateAnswer: (input: string) => Promise<string>;
+  selectedModel: string;
+  setSelectedModel: (model: string) => void;
+  generateAnswer: (prompt: string) => Promise<string>;
   answer: string | null;
-  error: string | null;
   setAnswer: (answer: string | null) => void;
-  selectedModel: AIModelType | AIModel;
-  setSelectedModel: Dispatch<SetStateAction<AIModelType>>;
-  usage: TokenUsage | null;
+  error: string | null;
+  usage: TokenUsage | undefined;
   isFirstQuestion: boolean;
 }
 
-export function useChat(options: UseChatOptions): UseChatReturn {
+export function useChat({ type }: UseChatOptions): UseChatReturn {
   const [selectedModel, setSelectedModel] = useState<AIModelType>(AIModel.GPT35_0125);
   const [loading, setLoading] = useState(false);
-  const [usage, setUsage] = useState<TokenUsage | null>(null);
+  const [usage, setUsage] = useState<TokenUsage | undefined>(undefined);
   const [answer, setAnswer] = useState<string | null>(null);
   const [isFirstQuestion, setIsFirstQuestion] = useState(true);
   const [error] = useState<string | null>(null);
 
   const getSystemContext = useCallback(() => {
-    switch (options.type) {
+    switch (type) {
       case 'chat':
         return 'You are a helpful AI assistant.';
-      case 'questions':
+      case 'interview':
         return 'You are an interview preparation assistant.';
       case 'knowledge':
         return 'You are a knowledge base assistant.';
       default:
         return 'You are a helpful AI assistant.';
     }
-  }, [options.type]);
+  }, [type]);
 
   const generateAnswer = useCallback(async (input: string): Promise<string> => {
     try {
@@ -67,7 +67,7 @@ export function useChat(options: UseChatOptions): UseChatReturn {
         case AIModel.GPT35_0125:
           response = await fetchChatGPTAnswer(finalInput, selectedModel);
           if (isOpenAIResponse(response)) {
-            setUsage(response.usage ?? null);
+            setUsage(response.usage ?? undefined);
             setIsFirstQuestion(false);
             const content = response.choices[0].message.content;
             setAnswer(content);
@@ -78,7 +78,7 @@ export function useChat(options: UseChatOptions): UseChatReturn {
         case AIModel.GEMINI:
           response = await generateGeminiResponse(finalInput);
           if (isGeminiResponse(response)) {
-            setUsage(null);
+            setUsage(undefined);
             setIsFirstQuestion(false);
             const content = response.candidates[0].content.parts[0].text;
             setAnswer(content);
@@ -89,7 +89,7 @@ export function useChat(options: UseChatOptions): UseChatReturn {
         case AIModel.MISTRAL:
           response = await generateMistralResponse(finalInput);
           if (isMistralResponse(response)) {
-            setUsage(response.usage ?? null);
+            setUsage(response.usage ?? undefined);
             setIsFirstQuestion(false);
             const content = response.choices[0].message.content;
             setAnswer(content);
@@ -100,7 +100,7 @@ export function useChat(options: UseChatOptions): UseChatReturn {
         case AIModel.OPENCHAT:
           response = await generateOpenChatResponse(finalInput);
           if (isOpenChatResponse(response)) {
-            setUsage(response.usage ?? null);
+            setUsage(response.usage ?? undefined);
             setIsFirstQuestion(false);
             const content = response.choices[0].message.content;
             setAnswer(content);

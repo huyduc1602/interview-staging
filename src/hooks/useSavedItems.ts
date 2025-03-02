@@ -1,20 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from './useAuth';
-
-export interface SavedItem {
-  id: string;
-  type: 'interview' | 'knowledge';
-  category: string;
-  question: string;
-  answer: string;
-  model: string;
-  timestamp: number;
-  followUpQuestions?: Array<{
-    question: string;
-    answer: string;
-    timestamp: number;
-  }>;
-}
+import type { SavedItem } from '@/types/common';
 
 export function useSavedItems() {
   const { user } = useAuth();

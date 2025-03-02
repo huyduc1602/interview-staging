@@ -49,7 +49,7 @@ export default function InterviewQuestions() {
         setSelectedModel,
         generateAnswer,
         setAnswer
-    } = useChat({ type: 'questions' });
+    } = useChat({ type: 'interview' });
 
     const {
         handleGenerateAnswer,
@@ -110,7 +110,7 @@ export default function InterviewQuestions() {
         const allQuestions = questions
             .filter(category => selectedCategories.includes(category.category))
             .flatMap(category =>
-                category.items.map(item => ({
+                category.items.map((item: any) => ({
                     ...item,
                     category: category.category
                 }))

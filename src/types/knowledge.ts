@@ -1,9 +1,8 @@
-export interface KnowledgeItem {
-    id?: string;
+import { BaseItem } from './common';
+
+export interface KnowledgeItem extends BaseItem {
     content: string;
     answer: string | null;
-    category?: string;
-    type?: 'knowledge';
 }
 
 export interface SavedItem {
@@ -24,7 +23,7 @@ export interface KnowledgeCategory {
 export interface ChatMessage {
     role: 'user' | 'assistant';
     content: string;
-    timestamp?: number;
+    timestamp: number;
     isError?: boolean;
 }
 

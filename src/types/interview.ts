@@ -1,11 +1,12 @@
-export interface InterviewQuestion {
+import { BaseItem } from './common';
+
+export interface InterviewQuestion extends BaseItem {
     question: string;
     answer?: string | null;
-    category?: string;
     orderNumber?: number;
 }
 
-export interface Category {
+export interface InterviewCategory {
     category: string;
     items: InterviewQuestion[];
 }

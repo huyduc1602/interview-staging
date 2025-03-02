@@ -213,7 +213,7 @@ export default function KnowledgeBase({ }: KnowledgeBaseProps) {
 
             <div className="space-y-4">
                 {knowledge.map((category, categoryIndex) => {
-                    const filteredItems = filterItems(category.items || [], searchQuery);
+                    const filteredItems = filterItems((category.items as KnowledgeItem[] || []) as KnowledgeItem[], searchQuery);
                     if (filteredItems.length === 0 && searchQuery) return null;
 
                     return (
