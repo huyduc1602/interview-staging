@@ -1,19 +1,20 @@
-export type AIModel = 
-  | 'gpt-3.5-turbo-0125'
-  | 'gpt-4-turbo-preview'
-  | 'gemini-pro'
-  | 'mistral-small'
-  | 'openchat-3.5';
-
-export interface BaseResponse {
-  content: string;
-  model: AIModel;
+export enum AIModel {
+  GPT35 = 'gpt-3.5-turbo',
+  GPT4 = 'gpt-4',
+  GEMINI = 'gemini',
+  MISTRAL = 'mistral',
+  OPENCHAT = 'openchat'
 }
 
 export interface TokenUsage {
   prompt_tokens: number;
   completion_tokens: number;
   total_tokens: number;
+}
+
+export interface BaseResponse {
+  model: AIModel;
+  usage?: TokenUsage;
 }
 
 export interface OpenAIResponse extends BaseResponse {
@@ -30,7 +31,6 @@ export interface OpenAIResponse extends BaseResponse {
     logprobs: null;
     finish_reason: string;
   }>;
-  usage: TokenUsage;
 }
 
 export interface GeminiResponse extends BaseResponse {
@@ -71,41 +71,35 @@ export interface MistralResponse extends BaseResponse {
     };
     finish_reason: string;
   }>;
-  usage: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
-  };
 }
 
 export interface OpenChatResponse extends BaseResponse {
   id: string;
-  object: 'chat.completion';
+  object: string;
   created: number;
-  model: string; // Changed from AIModel to string to support full model name
-  prompt: any[];
+  content: string;
+  prompt: string;
   choices: Array<{
-    finish_reason: 'stop' | 'length' | 'content_filter';
-    seed: number;
-    logprobs: null;
-    index: number;
-    message: {
-      role: 'assistant' | 'user';
-      content: string;
-      tool_calls: any[];
-    };
+    message: string;
+    finish_reason: string;
   }>;
-  usage: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
-  };
 }
 
-export type AIResponse = 
-  | OpenAIResponse 
-  | GeminiResponse 
-  | MistralResponse 
+export interface ApiResponse {
+  success: boolean;
+  data?: any;
+  error?: string;
+}
+
+export interface SheetData {
+  id: string;
+  values: any[][];
+}
+
+export type AIResponse =
+  | OpenAIResponse
+  | GeminiResponse
+  | MistralResponse
   | OpenChatResponse;
 
 export function isOpenAIResponse(response: AIResponse): response is OpenAIResponse {
@@ -121,12 +115,23 @@ export function isMistralResponse(response: AIResponse): response is MistralResp
 }
 
 export function isOpenChatResponse(response: AIResponse): response is OpenChatResponse {
-  return 'object' in response && 
-         response.object === 'chat.completion' &&
-         'choices' in response && 
-         Array.isArray(response.choices) &&
-         response.choices.length > 0 &&
-         'message' in response.choices[0] &&
-         'content' in response.choices[0].message &&
-         'tool_calls' in response.choices[0].message;
+  return 'object' in response &&
+    response.object === 'chat.completion' &&
+    'choices' in response &&
+    Array.isArray(response.choices) &&
+    response.choices.length > 0 &&
+    typeof response.choices[0].message === 'string';
 }
+
+export const processGeminiResponse = (response: any): GeminiResponse => {
+  return {
+    model: AIModel.GEMINI,
+    candidates: response.candidates || [{
+      content: {
+        parts: [{ text: '' }],
+        role: 'model'
+      },
+      finishReason: 'STOP'
+    }]
+  };
+};

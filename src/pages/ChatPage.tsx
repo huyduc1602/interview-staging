@@ -10,14 +10,21 @@ import { MessageItem } from '@/components/chat/message-item';
 import { SendHorizontal, AlertCircle, Sparkles } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AIResponseDisplay } from '@/components/ai/AIResponseDisplay';
+import { AIModel, TokenUsage } from '../services/aiServices/types';
 
 interface Message {
   role: 'user' | 'assistant' | 'error';
   content: string;
 }
 
-export default function ChatPage() {
-  const { t, i18n } = useTranslation();
+interface ChatPageProps {
+  onModelChange: (model: AIModel) => void;
+  tokenUsage?: TokenUsage;
+}
+
+export const ChatPage: React.FC<ChatPageProps> = ({
+  onModelChange }) => {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
@@ -28,10 +35,16 @@ export default function ChatPage() {
   const {
     loading,
     selectedModel,
-    setSelectedModel,
+    setSelectedModel: setModel,
     generateAnswer,
     usage
   } = useChat({ type: 'chat' });
+
+  // Update parent component when model changes
+  const setSelectedModel = (model: AIModel) => {
+    setModel(model);
+    onModelChange(model);
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -63,14 +76,14 @@ export default function ChatPage() {
 
     try {
       const response = await generateAnswer(input);
-      
+
       if (!response) {
         throw new Error(t('chat.errors.noResponse'));
       }
 
-      const assistantMessage: Message = { 
-        role: 'assistant', 
-        content: response 
+      const assistantMessage: Message = {
+        role: 'assistant',
+        content: response
       };
       setMessages(prev => [...prev, assistantMessage]);
     } catch (err) {
@@ -94,12 +107,12 @@ export default function ChatPage() {
     if (!messages.length) return;
     const lastUserMessage = [...messages].reverse()
       .find(m => m.role === 'user');
-    
+
     if (lastUserMessage) {
       // Remove last error message if exists
       setMessages(prev => prev.filter((_, i) => i !== prev.length - 1));
       await handleSubmit({
-        preventDefault: () => {},
+        preventDefault: () => { },
       } as React.FormEvent);
     }
   };
@@ -115,7 +128,7 @@ export default function ChatPage() {
             </h1>
             <ModelSelector
               selectedModel={selectedModel}
-              onModelChange={setSelectedModel}
+              onModelChange={(model: string) => setSelectedModel(model as AIModel)}
               onRegenerate={handleRetry}
               onClearCache={() => {
                 setMessages([welcomeMessage]);
@@ -135,14 +148,14 @@ export default function ChatPage() {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-          
+
           {messages.map((message, index) => (
             <MessageItem
               key={index}
               message={message}
               onSave={() => handleSave(message, index)}
               loading={loading && index === messages.length - 1}
-              usage={index === messages.length - 1 ? usage : undefined}
+              usage={index === messages.length - 1 && usage ? usage : undefined}
               showSave={index !== 0} // Hide save button for welcome message
             >
               <AIResponseDisplay
@@ -170,8 +183,8 @@ export default function ChatPage() {
                 }
               }}
             />
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={loading || !input.trim()}
               variant={loading ? "outline" : "default"}
               className="transition-all duration-200 hover:scale-105"

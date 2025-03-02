@@ -9,7 +9,7 @@ interface Message {
   content: string;
 }
 
-interface MessageItemProps {
+export interface MessageItemProps {
   message: Message;
   onSave: () => void;
   loading?: boolean;
@@ -19,6 +19,7 @@ interface MessageItemProps {
     completion_tokens: number;
     total_tokens: number;
   };
+  children?: React.ReactNode;
 }
 
 export function MessageItem({ 

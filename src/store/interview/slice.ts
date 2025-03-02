@@ -1,4 +1,20 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+interface InterviewState {
+  knowledge: any[];
+  questions: any[];
+  answers: { [key: string]: any };
+  loading: boolean;
+  error: null | any;
+  cachedAnswers: {
+    [language: string]: {
+      [type: string]: {
+        [questionId: string]: any;
+      };
+    };
+  };
+  [key: string]: any[] | any;
+}
 
 const loadCachedAnswers = () => {
   try {
@@ -10,7 +26,7 @@ const loadCachedAnswers = () => {
   }
 };
 
-const initialState = {
+const initialState: InterviewState = {
   knowledge: [],
   questions: [],
   answers: {},
@@ -58,14 +74,25 @@ const interviewSlice = createSlice({
     updateKnowledgeStatusSuccess: (state, action) => {
       state.loading = false;
       const { rowIndex, status } = action.payload;
-      state.knowledge = state.knowledge.map(category => ({
-        ...category,
-        items: category.items.map(item =>
-          item.rowIndex === rowIndex
-            ? { ...item, status }
-            : item
-        )
-      }));
+      interface KnowledgeItem {
+        rowIndex: number;
+        status: string;
+        [key: string]: any;
+      }
+
+      interface KnowledgeCategory {
+        items: KnowledgeItem[];
+        [key: string]: any;
+      }
+
+            state.knowledge = state.knowledge.map((category: KnowledgeCategory) => ({
+              ...category,
+              items: category.items.map((item: KnowledgeItem) =>
+                item.rowIndex === rowIndex
+                  ? { ...item, status }
+                  : item
+              )
+            }));
     },
     updateKnowledgeStatusFailure: (state, action) => {
       state.loading = false;
@@ -81,7 +108,7 @@ const interviewSlice = createSlice({
         state.cachedAnswers[language][type] = {};
       }
       state.cachedAnswers[language][type][questionId] = answer;
-      
+
       // Save to localStorage
       try {
         localStorage.setItem('cachedAnswers', JSON.stringify(state.cachedAnswers));
@@ -92,6 +119,17 @@ const interviewSlice = createSlice({
     clearCachedAnswers: (state) => {
       state.cachedAnswers = { en: {}, vi: {} };
       localStorage.removeItem('cachedAnswers');
+    },
+
+    setItems: (state, action: PayloadAction<{ key: string; items: any[] }>) => {
+      state[`${action.payload.key}`] = action.payload.items;
+    },
+    addItems: (state, action: PayloadAction<{ key: string; items: any[] }>) => {
+      const currentItems = state[action.payload.key] || [];
+      state[action.payload.key] = [
+        ...currentItems,
+        ...action.payload.items.filter(item => !currentItems.includes(item))
+      ];
     }
   },
 });
@@ -108,6 +146,8 @@ export const {
   updateKnowledgeStatusFailure,
   setCachedAnswer,
   clearCachedAnswers,
+  setItems,
+  addItems,
 } = interviewSlice.actions;
 
 export default interviewSlice.reducer;
