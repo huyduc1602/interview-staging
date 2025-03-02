@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchDataRequest } from '@/store/interview/slice';
 import { useChat } from '@/hooks/useChat';
@@ -31,14 +31,14 @@ export default function KnowledgeBase() {
         error
     } = useAIResponse({
         generateAnswer,
-        onSuccess: (content) => {
+        onSuccess: useCallback((content) => {
             if (selectedItem) {
-                setSelectedItem({ ...selectedItem, answer: content });
+                setSelectedItem(prev => ({ ...prev, answer: content }));
             }
-        },
-        onError: () => {
+        }, [selectedItem]),
+        onError: useCallback(() => {
             setSelectedItem(null);
-        }
+        }, [])
     });
 
     useEffect(() => {
@@ -60,11 +60,17 @@ export default function KnowledgeBase() {
     };
 
     const handleItemClick = async (item) => {
-        setSelectedItem(item);
+        // Set selected item with initial empty answer
+        setSelectedItem({ ...item, answer: null });
+
         try {
-            await handleGenerateAnswer(item.content);
+            const answer = await handleGenerateAnswer(item.content);
+            // Update selected item with the generated answer
+            setSelectedItem(prev => ({ ...prev, answer }));
         } catch (error) {
             console.error('Failed to generate answer:', error);
+            // Reset selected item on error
+            setSelectedItem(null);
         }
     };
 
@@ -161,9 +167,9 @@ export default function KnowledgeBase() {
                     <div className="rounded-lg bg-white shadow">
                         <AIResponseDisplay
                             loading={loading}
-                            content={selectedItem?.answer || null}
+                            content={selectedItem?.answer}
                             error={error}
-                            emptyMessage={t('knowledge.selectTopic')}
+                            emptyMessage={loading ? undefined : t('knowledge.selectTopic')}
                         />
                     </div>
                 </div>

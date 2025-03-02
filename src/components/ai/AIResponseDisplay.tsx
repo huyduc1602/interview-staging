@@ -20,6 +20,7 @@ export function AIResponseDisplay({
 }: AIResponseDisplayProps) {
     const { t } = useTranslation();
 
+    // Show loading state first
     if (loading) {
         return (
             <div className={cn("flex items-center justify-center p-6", className)}>
@@ -28,6 +29,7 @@ export function AIResponseDisplay({
         );
     }
 
+    // Then show error if present
     if (error) {
         return (
             <div className={cn("p-6", className)}>
@@ -36,7 +38,8 @@ export function AIResponseDisplay({
         );
     }
 
-    if (!content) {
+    // Show empty message only if no content and not loading
+    if (!content && !loading) {
         return (
             <div className={cn("p-6", className)}>
                 <div className="text-gray-500">
@@ -46,10 +49,11 @@ export function AIResponseDisplay({
         );
     }
 
+    // Show content if available
     return (
         <article className={cn("p-6", className)}>
             <div className="prose prose-slate dark:prose-invert prose-pre:bg-gray-800 prose-pre:text-gray-100 max-w-none">
-                <MarkdownContent content={content} />
+                <MarkdownContent content={content || ''} />
             </div>
         </article>
     );
