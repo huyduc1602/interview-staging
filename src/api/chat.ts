@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 import type { ChatOptions } from './chat.d';
 
 const openai = new OpenAI({
-    apiKey: import.meta.env.VITE_CHATGPT_API_KEY,
+    apiKey: import.meta.env.VITE_OPENCHAT_API_KEY,
     dangerouslyAllowBrowser: true
 });
 

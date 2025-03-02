@@ -29,6 +29,7 @@ export default function ChatPage() {
     selectedModel,
     setSelectedModel,
     generateAnswer,
+    usage
   } = useChat({ type: 'chat' });
 
   const scrollToBottom = () => {
@@ -41,7 +42,7 @@ export default function ChatPage() {
 
   const welcomeMessage: Message = {
     role: 'assistant',
-    content: t('chat.welcome.title')
+    content: `# 👋 ${t('chat.welcome.greeting')}\n\n${t('chat.welcome.capabilities')}`
   };
 
   useEffect(() => {
@@ -60,7 +61,7 @@ export default function ChatPage() {
     setError(null);
 
     try {
-      const response = await generateAnswer(input, selectedModel);
+      const response = await generateAnswer(input);
       
       if (!response) {
         throw new Error(t('chat.errors.noResponse'));
@@ -140,6 +141,7 @@ export default function ChatPage() {
               message={message}
               onSave={() => handleSave(message, index)}
               loading={loading && index === messages.length - 1}
+              usage={index === messages.length - 1 ? usage : undefined}
               showSave={index !== 0} // Hide save button for welcome message
             />
           ))}

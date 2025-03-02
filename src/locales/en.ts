@@ -10,7 +10,7 @@ export default {
     home: 'Interview Hub',
     knowledgeBase: '📚 Knowledge Base',
     interviewQuestions: '❓ Interview Questions',
-    chat: 'Chat with ChatGPT',
+    chat: 'Chat with AI',
   },
   home: {
     hero: {
@@ -121,19 +121,24 @@ export default {
       default: '{{input}}'
     },
     errors: {
-      noResponse: 'No response from ChatGPT',
+      noResponse: 'No response from AI',
       unknown: 'An unknown error occurred',
       apiError: 'Failed to get response from ChatGPT',
       invalidKey: 'Invalid API key',                                  
       rateLimit: 'Rate limit exceeded. Please try again later.', 
-      networkError: 'Network connection error'
+      networkError: 'Network connection error',
+      geminiApiError: 'Gemini API Error: {message}',
+      openchatApiError: 'OpenChat API Error: {message}',
+      invalidApiKey: 'Invalid API key for {model}',
+      endpointNotFound: 'API endpoint not found for {model}'
     },
     models: {
       select: 'Select model',
       premium: 'Premium'
     },
     welcome: {
-      title: "# 👋 Hello! I'm AI Assistant\n\nI can help you with:\n- 📚 Explaining programming concepts\n- 💡 Suggesting technical solutions\n- 🔍 Code analysis and review\n- 📝 Unit test creation\n- ⚡ Code performance optimization\n\nFeel free to ask questions in English or Vietnamese!",
+      greeting: "Hello! I'm AI Assistant",
+      capabilities: "I can help you with:\n- 📚 Programming concepts\n- 💡 Technical solutions\n- 🔍 Code analysis\n- 📝 Unit testing\n- ⚡ Performance optimization"
     },
     input: {
       placeholder: "Type your question...",

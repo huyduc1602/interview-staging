@@ -38,7 +38,7 @@ npm install
 ```bash
 VITE_GOOGLE_SHEET_API_KEY=your_google_sheet_api_key
 VITE_SPREADSHEET_ID=your_spreadsheet_id
-VITE_CHATGPT_API_KEY=your_chatgpt_api_key
+VITE_OPENCHAT_API_KEY=your_chatgpt_api_key
 ```
 
 ## Google Sheets Setup
@@ -97,7 +97,7 @@ interview/
 |----------|-------------|----------|
 | `VITE_GOOGLE_SHEET_API_KEY` | Google Sheets API key | Yes |
 | `VITE_SPREADSHEET_ID` | ID of your Google Sheet | Yes |
-| `VITE_CHATGPT_API_KEY` | OpenAI API key | Yes |
+| `VITE_OPENCHAT_API_KEY` | OpenAI API key | Yes |
 
 ## Development
 

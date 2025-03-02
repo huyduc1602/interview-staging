@@ -10,7 +10,7 @@ export default {
     home: 'Trung tâm Phỏng vấn',
     knowledgeBase: '📚 Cơ sở Kiến thức',
     interviewQuestions: '❓ Câu hỏi Phỏng vấn',
-    chat: 'Trò chuyện ChatGPT',
+    chat: 'Trò chuyện với AI',
   },
   home: {
     hero: {
@@ -122,19 +122,24 @@ export default {
       default: '{{input}}'
     },
     errors: {
-      noResponse: 'Không nhận được phản hồi từ ChatGPT',
+      noResponse: 'Không nhận được phản hồi từ AI',
       unknown: 'Đã xảy ra lỗi không xác định',
       apiError: 'Lỗi API ChatGPT: {message}',
       invalidKey: 'API key không hợp lệ',
       rateLimit: 'Đã vượt quá giới hạn yêu cầu. Vui lòng thử lại sau.',
-      networkError: 'Lỗi kết nối mạng'
+      networkError: 'Lỗi kết nối mạng',
+      geminiApiError: 'Lỗi API Gemini: {message}',
+      openchatApiError: 'Lỗi API OpenChat: {message}',
+      invalidApiKey: 'API key không hợp lệ cho {model}',
+      endpointNotFound: 'Không tìm thấy endpoint API cho {model}'
     },
     models: {
       select: 'Chọn mô hình',
       premium: 'Premium'
     },
     welcome: {
-      title: "# 👋 Xin chào! Tôi là AI Assistant\n\nTôi có thể giúp bạn:\n- 📚 Giải thích các khái niệm lập trình\n- 💡 Đề xuất giải pháp kỹ thuật\n- 🔍 Phân tích và review code\n- 📝 Tạo unit test\n- ⚡ Tối ưu hiệu suất code\n\nHãy đặt câu hỏi bằng tiếng Việt hoặc tiếng Anh!",
+      greeting: "Xin chào! Tôi là AI Assistant",
+      capabilities: "Tôi có thể giúp bạn:\n- 📚 Giải thích khái niệm lập trình\n- 💡 Đề xuất giải pháp kỹ thuật\n- 🔍 Phân tích và review code\n- 📝 Tạo unit test\n- ⚡ Tối ưu hiệu suất code"
     },
     input: {
       placeholder: "Nhập câu hỏi của bạn...",
@@ -148,11 +153,6 @@ export default {
       retry: "Thử lại",
       clear: "Xóa chat",
       save: "Lưu vào câu hỏi"
-    },
-    errors: {
-      noResponse: "Không nhận được phản hồi từ ChatGPT",
-      unknown: "Đã xảy ra lỗi không xác định",
-      networkError: "Lỗi kết nối mạng"
     }
   }
 };

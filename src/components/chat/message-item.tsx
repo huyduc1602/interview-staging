@@ -4,21 +4,29 @@ import { Save, AlertCircle, User, Bot } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
+interface Message {
+  role: 'user' | 'assistant' | 'error';
+  content: string;
+}
+
 interface MessageItemProps {
-  message: {
-    role: 'user' | 'assistant' | 'error';
-    content: string;
-  };
+  message: Message;
   onSave: () => void;
   loading?: boolean;
   showSave?: boolean;
+  usage?: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+  };
 }
 
 export function MessageItem({ 
   message, 
   onSave, 
   loading,
-  showSave = true 
+  showSave = true,
+  usage 
 }: MessageItemProps) {
   const isUser = message.role === 'user';
   const isError = message.role === 'error';
@@ -82,6 +90,13 @@ export function MessageItem({
             </div>
           )}
         </div>
+        {usage && !isUser && (
+          <div className="text-xs text-muted-foreground mt-4 space-x-4">
+            <span>Tokens: {usage.total_tokens}</span>
+            <span>Prompt: {usage.prompt_tokens}</span>
+            <span>Completion: {usage.completion_tokens}</span>
+          </div>
+        )}
       </div>
     </div>
   );

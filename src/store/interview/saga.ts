@@ -2,7 +2,8 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { fetchGoogleSheetData, updateKnowledgeStatus } from '@/services/googleSheetService';
 import type { ApiResponse, SheetData } from '@/services/googleSheetService';
-import { fetchChatGPTAnswer } from '@/services/chatgptService';
+import { fetchChatGPTAnswer } from '@/services/aiServices/chatgptService';
+import type { AIResponse } from '@/services/aiServices/types';
 import {
     fetchDataRequest,
     fetchDataSuccess,
@@ -40,12 +41,12 @@ function* fetchDataSaga(): Generator<any, void, ApiResponse<SheetData>> {
     }
 }
 
-function* fetchAnswerSaga(action: PayloadAction<string>): Generator<any, void, string> {
+function* fetchAnswerSaga(action: PayloadAction<string>): Generator<any, void, AIResponse> {
     try {
-        const answer = yield call(fetchChatGPTAnswer, action.payload);
+        const response: AIResponse = yield call(fetchChatGPTAnswer, action.payload, 'gpt-3.5-turbo-0125');
         yield put(fetchAnswerSuccess({
             question: action.payload,
-            answer,
+            answer: response.content,
         } as AnswerPayload));
     } catch (error) {
         yield put(fetchAnswerFailure(
