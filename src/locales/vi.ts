@@ -10,11 +10,19 @@ export default {
     "assistant": "Trợ lý",
     errors: {
       failedToGetAnswer: "Xin lỗi, tôi không thể tạo ra câu trả lời. Vui lòng thử lại."
+    },
+    save: 'Lưu',
+    saved: {
+      title: 'Mục đã lưu',
+      empty: 'Chưa có mục nào được lưu',
+      delete: 'Xóa',
+      interview: 'Câu hỏi phỏng vấn',
+      knowledge: 'Cơ sở kiến thức'
     }
   },
   nav: {
     home: 'Trung tâm Phỏng vấn',
-    knowledgeBase: '📚 Cơ sở Kiến thức',
+    knowledgeBase: '📚 Cơ sở Kiến Thức',
     interviewQuestions: '❓ Câu hỏi Phỏng vấn',
     chat: 'Trò chuyện với AI',
   },
@@ -170,5 +178,13 @@ export default {
       title: "Đặt câu hỏi thêm",
       inputPlaceholder: "Đặt câu hỏi về chủ đề này..."
     }
+  },
+  auth: {
+    login: {
+      title: "Đăng nhập để lưu lịch sử trò chuyện",
+      email: "Nhập email của bạn",
+      submit: "Đăng nhập"
+    },
+    logout: "Đăng xuất"
   }
 };

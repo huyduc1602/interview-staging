@@ -10,8 +10,15 @@ import { Search, Send } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { ModelSelector } from '@/components/ui/model-selector';
 import { AIResponseDisplay } from '@/components/ai/AIResponseDisplay';
+import { useAuth } from '@/hooks/useAuth';
+import { useSavedItems } from '@/hooks/useSavedItems';
+import { Button } from '@/components/ui/button';
+import { BookmarkPlus } from 'lucide-react';
+import { LoginForm } from '@/components/auth/LoginForm';
 
 export default function KnowledgeBase() {
+    const { user } = useAuth();
+
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const { knowledge } = useSelector((state) => state.interview);
@@ -20,6 +27,7 @@ export default function KnowledgeBase() {
     const [selectedItem, setSelectedItem] = useState(null);
     const [chatInput, setChatInput] = useState('');
     const [chatHistory, setChatHistory] = useState({});
+    const { savedItems, saveItem, addFollowUpQuestion } = useSavedItems();
 
     const {
         loading,
@@ -46,6 +54,23 @@ export default function KnowledgeBase() {
     useEffect(() => {
         dispatch(fetchDataRequest());
     }, [dispatch]);
+
+    // Load chat history from localStorage on component mount
+    useEffect(() => {
+        if (user) {
+            const savedHistory = localStorage.getItem(`chat_history_${user.id}`);
+            if (savedHistory) {
+                setChatHistory(JSON.parse(savedHistory));
+            }
+        }
+    }, [user]);
+
+    // Save chat history to localStorage when it changes
+    useEffect(() => {
+        if (user && Object.keys(chatHistory).length > 0) {
+            localStorage.setItem(`chat_history_${user.id}`, JSON.stringify(chatHistory));
+        }
+    }, [chatHistory, user]);
 
     const toggleCategory = (categoryIndex) => {
         setExpandedCategories(prev => ({
@@ -110,6 +135,18 @@ export default function KnowledgeBase() {
                     { role: 'assistant', content: answer }
                 ]
             }));
+
+            // Save follow-up Q&A
+            if (user) {
+                const savedItem = savedItems.find(
+                    item => item.type === 'knowledge' &&
+                        item.question === selectedItem.content
+                );
+
+                if (savedItem) {
+                    addFollowUpQuestion(savedItem.id, question, answer);
+                }
+            }
         } catch (error) {
             console.error('Failed to get follow-up answer:', error);
             // Add error message to chat history
@@ -206,14 +243,31 @@ export default function KnowledgeBase() {
         <div className="py-6 overflow-y-auto">
             {selectedItem ? (
                 <div className="space-y-6">
-                    {/* Main Answer Section */}
-                    <div className="space-y-6 border-b pb-6">
-                        <div className="border-b pb-4">
+                    <div className="border-b pb-4">
+                        <div className="flex items-center justify-between">
                             <h1 className="text-2xl font-semibold">
                                 {selectedItem.content}
                             </h1>
-                            {renderModelSelector()}
+                            {user && selectedItem.answer && (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => saveItem({
+                                        type: 'knowledge',
+                                        category: selectedItem.category,
+                                        question: selectedItem.content,
+                                        answer: selectedItem.answer,
+                                        model: selectedModel
+                                    })}
+                                >
+                                    <BookmarkPlus className="w-4 h-4 mr-2" />
+                                    {t('common.save')}
+                                </Button>
+                            )}
                         </div>
+                        {renderModelSelector()}
+                    </div>
+                    <div className="space-y-6 border-b pb-6">
                         <div className="rounded-lg bg-white shadow">
                             <AIResponseDisplay
                                 loading={loading}
@@ -294,6 +348,17 @@ export default function KnowledgeBase() {
             )}
         </div>
     );
+
+    if (!user) {
+        return (
+            <Layout>
+                <div className="max-w-md mx-auto mt-10 p-6">
+                    <h1 className="text-2xl font-bold mb-6">Login to Save Your Chat History</h1>
+                    <LoginForm />
+                </div>
+            </Layout>
+        );
+    }
 
     return (
         <Layout>

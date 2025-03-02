@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronDown, ChevronRight, ChevronUp, Shuffle, Tag, X, RefreshCw, Zap, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronUp, Shuffle, Tag, X, RefreshCw, Zap, Trash2, BookmarkPlus } from "lucide-react";
 import { TooltipProvider, Tooltip } from "@/components/ui/tooltip";
 import { useTranslation } from 'react-i18next';
 import {
@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/select";
 import { ModelSelector } from '@/components/ui/model-selector';
 import { AIResponseDisplay } from '@/components/ai/AIResponseDisplay';
+import { useAuth } from '@/hooks/useAuth';
+import { useSavedItems } from '@/hooks/useSavedItems';
 
 /**
  * Component for displaying and managing a list of interview questions.
@@ -44,6 +46,8 @@ export default function InterviewQuestions() {
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [shuffledQuestions, setShuffledQuestions] = useState([]);
     const [isTagsExpanded, setIsTagsExpanded] = useState(false);
+    const { user } = useAuth();
+    const { saveItem } = useSavedItems();
 
     const {
         loading,
@@ -342,9 +346,27 @@ export default function InterviewQuestions() {
             {selectedQuestion ? (
                 <div className="space-y-6">
                     <div className="border-b pb-4">
-                        <h1 className="text-2xl font-semibold">
-                            {selectedQuestion.question}
-                        </h1>
+                        <div className="flex items-center justify-between">
+                            <h1 className="text-2xl font-semibold">
+                                {selectedQuestion.question}
+                            </h1>
+                            {user && selectedQuestion.answer && (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => saveItem({
+                                        type: 'interview',
+                                        category: selectedQuestion.category,
+                                        question: selectedQuestion.question,
+                                        answer: selectedQuestion.answer,
+                                        model: selectedModel
+                                    })}
+                                >
+                                    <BookmarkPlus className="w-4 h-4 mr-2" />
+                                    {t('common.save')}
+                                </Button>
+                            )}
+                        </div>
                         {renderModelSelector()}
                     </div>
                     <div className="rounded-lg bg-white shadow">

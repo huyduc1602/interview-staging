@@ -10,6 +10,14 @@ export default {
     assistant: 'Assistant',
     errors: {
       failedToGetAnswer: "Sorry, I couldn't generate an answer. Please try again."
+    },
+    save: 'Save',
+    saved: {
+      title: 'Saved Items',
+      empty: 'No saved items yet',
+      delete: 'Delete',
+      interview: 'Interview Questions',
+      knowledge: 'Knowledge Base'
     }
   },
   nav: {
@@ -188,5 +196,13 @@ export default {
       shuffle: "Shuffle selected categories",
       collapse: "Collapse categories"
     }
+  },
+  auth: {
+    login: {
+      title: "Login to Save Your Chat History",
+      email: "Enter your email",
+      submit: "Login"
+    },
+    logout: "Sign out"
   }
 }
