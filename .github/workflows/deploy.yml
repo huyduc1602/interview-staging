@@ -43,7 +43,9 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
-          cname: your-domain.com # Optional: Add if you have a custom domain
+          cname: interview.hoanghuyduc.com # Optional: Add if you have a custom domain
+          allow_empty_commit: true
+          keep_files: true
 
       - name: Notify deployment status
         if: always()
