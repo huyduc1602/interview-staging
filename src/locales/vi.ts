@@ -43,9 +43,6 @@ export default {
         action: 'Bắt Đầu Luyện Tập',
       },
       chat: {
-        welcome: "Xin chào, %{name}! Tôi có thể giúp gì cho bạn hôm nay?",
-        startPrompt: "Hãy hỏi tôi bất cứ điều gì về lập trình, phỏng vấn hoặc các chủ đề kỹ thuật!",
-        inputPlaceholder: "Nhập tin nhắn của bạn tại đây...",
         title: 'Trợ lý Chat AI',
         description: 'Trò chuyện với trợ lý AI của chúng tôi để nhận được sự trợ giúp tức thì cho các câu hỏi lập trình của bạn.',
         action: 'Bắt đầu trò chuyện'
@@ -69,6 +66,11 @@ export default {
         label: 'Hỗ Trợ AI',
       },
     },
+    chat: {
+      welcome: "Xin chào, {{name}}! Tôi có thể giúp gì cho bạn hôm nay?",
+      startPrompt: "Hãy hỏi tôi bất cứ điều gì về lập trình, phỏng vấn hoặc các chủ đề kỹ thuật!",
+      inputPlaceholder: "Nhập tin nhắn của bạn tại đây...",
+    }
   },
   knowledgeBase: {
     title: 'Cơ sở kiến thức',

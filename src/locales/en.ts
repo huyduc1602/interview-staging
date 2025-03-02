@@ -43,9 +43,6 @@ export default {
         action: 'Start Practicing',
       },
       chat: {
-        welcome: "Welcome, %{name}! How can I help you today?",
-        startPrompt: "Ask me anything about programming, interviews, or technical topics!",
-        inputPlaceholder: "Type your message here...",
         title: 'AI Chat Assistant',
         description: 'Have a conversation with our AI assistant to get instant help with your programming questions.',
         action: 'Start chatting'
@@ -70,7 +67,7 @@ export default {
       },
     },
     chat: {
-      welcome: "Welcome, %{name}! How can I help you today?",
+      welcome: "Welcome, {{name}}! How can I help you today?",
       startPrompt: "Ask me anything about programming, interviews, or technical topics!",
       inputPlaceholder: "Type your message here..."
     }
