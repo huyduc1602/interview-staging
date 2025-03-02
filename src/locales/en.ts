@@ -25,6 +25,7 @@ export default {
     knowledgeBase: '📚 Knowledge Base',
     interviewQuestions: '❓ Interview Questions',
     chat: 'Chat with AI',
+    settings: 'Setting',
   },
   home: {
     hero: {
@@ -211,5 +212,28 @@ export default {
     login: "Sign In",
     loginTitle: "Welcome Back!",
     logout: "Sign Out"
+  },
+  settings: {
+    title: "Settings",
+    tabs: {
+      apiKeys: "API Keys"
+    },
+    apiKeys: {
+      info: "Enter your API keys below. Your keys are stored securely in your browser and never sent to our servers.",
+      openai: {
+        help: "Get your API key from OpenAI dashboard"
+      },
+      gemini: {
+        help: "Get your API key from Google Cloud Console"
+      },
+      mistral: {
+        help: "Get your API key from Mistral AI dashboard"
+      },
+      openchat: {
+        help: "Get your API key from OpenChat dashboard"
+      }
+    },
+    save: "Save Settings",
+    saved: "Settings saved successfully!"
   }
 }

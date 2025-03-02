@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import KnowledgeBase from './pages/KnowledgeBase';
 import InterviewQuestions from './pages/InterviewQuestions';
 import ChatPage from './pages/ChatPage';
+import Settings from './pages/Settings';
 import './i18n';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
             <Route path="/knowledge" element={<KnowledgeBase />} />
             <Route path="/questions" element={<InterviewQuestions />} />
             <Route path="/chat" element={<ChatPage />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="/" element={<HomePage />} />
           </Routes>
         </main>

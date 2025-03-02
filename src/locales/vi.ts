@@ -25,6 +25,7 @@ export default {
     knowledgeBase: '📚 Cơ sở Kiến Thức',
     interviewQuestions: '❓ Câu hỏi Phỏng vấn',
     chat: 'Trò chuyện với AI',
+    settings: 'Cài đặt',
   },
   home: {
     hero: {
@@ -196,5 +197,28 @@ export default {
       submit: "Đăng nhập"
     },
     logout: "Đăng xuất"
+  },
+  settings: {
+    title: "Cài đặt",
+    tabs: {
+      apiKeys: "Khóa API"
+    },
+    apiKeys: {
+      info: "Nhập khóa API của bạn bên dưới. Các khóa của bạn được lưu trữ an toàn trong trình duyệt và không bao giờ được gửi đến máy chủ của chúng tôi.",
+      openai: {
+        help: "Lấy khóa API từ bảng điều khiển OpenAI"
+      },
+      gemini: {
+        help: "Lấy khóa API từ Google Cloud Console"
+      },
+      mistral: {
+        help: "Lấy khóa API từ bảng điều khiển Mistral AI"
+      },
+      openchat: {
+        help: "Lấy khóa API từ bảng điều khiển OpenChat"
+      }
+    },
+    save: "Lưu Cài đặt",
+    saved: "Đã lưu cài đặt thành công!"
   }
 };
