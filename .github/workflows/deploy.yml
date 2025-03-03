@@ -44,11 +44,13 @@ jobs:
         run: npm run build
 
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          branch: gh-pages
-          folder: dist
-          clean: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          cname: interview.hoanghuyduc.com # Optional: Add if you have a custom domain
+          allow_empty_commit: true
+          keep_files: true
 
       # - name: Notify deployment status
       #   if: always()
