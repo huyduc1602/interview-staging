@@ -11,8 +11,10 @@ export default defineConfig({
     },
     build: {
         sourcemap: true,
+        outDir: 'dist',
     },
     server: {
         port: 5173,
     },
+    base: '/interview/',
 });
