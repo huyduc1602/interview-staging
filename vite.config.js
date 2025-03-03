@@ -13,4 +13,7 @@ export default defineConfig({
     },
   },
   base: '/interview/',
+  build: {
+    outDir: 'dist',
+  },
 })
