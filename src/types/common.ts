@@ -6,10 +6,13 @@ export interface BaseItem {
     timestamp?: number;
 }
 
-export type SavedItem = {
-    followUpQuestions?: Array<{
-        question: string;
-        answer: string;
-        timestamp: number;
-    }>
-} & BaseItem
+export interface SavedItem {
+    id: string;
+    timestamp: number;
+    followUpQuestions?: { question: string; answer: string; timestamp: number }[];
+    type: string;
+    category: string;
+    question: string;
+    answer: string;
+    model: string;
+}

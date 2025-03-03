@@ -141,7 +141,7 @@ export default function KnowledgeBase({ }: KnowledgeBaseProps) {
 
             if (user && selectedItem) {
                 const savedItem = savedItems.find(
-                    item => item.type === 'knowledge' && item.question === selectedItem.content
+                    item => item.question === selectedItem.content
                 );
 
                 if (savedItem) {
