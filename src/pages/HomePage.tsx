@@ -1,6 +1,10 @@
 import { useState, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, Brain, ArrowRight, MessageSquare, Send } from 'lucide-react';
+import BookOpen from '@/components/icons/BookOpen';
+import Brain from '@/components/icons/Brain';
+import ArrowRight from '@/components/icons/ArrowRight';
+import MessageSquare from '@/components/icons/MessageSquare';
+import Send from '@/components/icons/Send';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
 import { useChat } from '@/hooks/useChat';
