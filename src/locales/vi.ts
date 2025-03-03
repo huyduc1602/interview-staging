@@ -191,11 +191,8 @@ export default {
     }
   },
   auth: {
-    login: {
-      title: "Đăng nhập để lưu lịch sử trò chuyện",
-      email: "Nhập email của bạn",
-      submit: "Đăng nhập"
-    },
+    login: "Đăng nhập",
+    loginTitle: "Chào mừng trở lại!",
     logout: "Đăng xuất"
   },
   settings: {
