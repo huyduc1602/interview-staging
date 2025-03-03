@@ -12,7 +12,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  base: '/',
+  base: '/', // Use '/' for custom domain
   build: {
     outDir: 'dist',
   },
