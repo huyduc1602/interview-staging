@@ -1,12 +1,13 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 export default defineConfig({
     plugins: [react()],
     resolve: {
         alias: {
-            '@': path.resolve(__dirname, './src'),
+            '@': path.resolve(path.dirname(fileURLToPath(import.meta.url)), './src'),
         },
         extensions: ['.js', '.ts', '.jsx', '.tsx']
     },
@@ -17,5 +18,5 @@ export default defineConfig({
     server: {
         port: 5173,
     },
-    base: '/',
+    base: '/', // Ensure this is set correctly for Vercel
 });

@@ -17,7 +17,7 @@ export default [
         ecmaVersion: 'latest',
         ecmaFeatures: { jsx: true },
         sourceType: 'module',
-        project: './tsconfig.json', // Specify the path to your tsconfig.json
+        project: './tsconfig.eslint.json', // Use the new ESLint-specific TSConfig
       },
     },
     plugins: {
