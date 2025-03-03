@@ -2,7 +2,7 @@
   "name": "interview",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://huyduc1602.github.io/interview/",
+  "homepage": "https://interview.hoanghuyduc.com",
   "type": "module",
   "scripts": {
     "tailwindcss": "tailwindcss",
