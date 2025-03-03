@@ -52,10 +52,10 @@ jobs:
           allow_empty_commit: true
           keep_files: true
 
-      - name: Notify deployment status
-        if: always()
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data '{
-            "text": "Deployment ${{ job.status }}",
-            "title": "Deploy Interview App"
-          }' ${{ secrets.ZALO_WEBHOOK }}
+      # - name: Notify deployment status
+      #   if: always()
+      #   run: |
+      #     curl -X POST -H 'Content-type: application/json' --data '{
+      #       "text": "Deployment ${{ job.status }}",
+      #       "title": "Deploy Interview App"
+      #     }' ${{ secrets.ZALO_WEBHOOK }}
