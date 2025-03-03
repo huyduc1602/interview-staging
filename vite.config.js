@@ -12,7 +12,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  base: '/interview/',
+  base: '/interview.hoanghuyduc.com/',
   build: {
     outDir: 'dist',
   },
